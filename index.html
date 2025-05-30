@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZOZO Store - Handmade Women Accessories</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-color: #d4af7a;
@@ -25,7 +26,7 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', sans-serif;
             background-color: var(--light-bg);
             color: var(--dark-text);
             line-height: 1.6;
@@ -49,6 +50,7 @@
         }
 
         .logo {
+            font-family: 'Playfair Display', serif;
             font-size: 3.5rem;
             font-weight: 700;
             color: var(--light-text);
@@ -334,6 +336,7 @@
         }
 
         .modal-title {
+            font-family: 'Playfair Display', serif;
             font-size: 2rem;
             color: var(--secondary-color);
             margin-bottom: 1rem;
@@ -389,6 +392,7 @@
             padding: 2rem;
             font-size: 1.2rem;
             color: var(--secondary-color);
+            grid-column: 1 / -1;
         }
 
         .loading-spinner {
@@ -415,6 +419,7 @@
             color: #c62828;
             margin: 2rem auto;
             max-width: 800px;
+            grid-column: 1 / -1;
         }
 
         .error-message i {
@@ -437,6 +442,123 @@
             background: #c19e6b;
         }
 
+        /* Customer Reviews */
+        .reviews-section {
+            margin: 4rem 0;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 2rem;
+            color: var(--secondary-color);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 3px;
+            background: var(--primary-color);
+            margin: 0.5rem auto;
+        }
+
+        .reviews-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .review-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .review-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stars {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .review-content {
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            color: #555;
+        }
+
+        .review-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary-color);
+        }
+
+        .author-info h4 {
+            color: var(--secondary-color);
+        }
+
+        .author-info p {
+            font-size: 0.9rem;
+            color: #777;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, #7a5c44, #5c4735);
+            color: var(--light-text);
+            padding: 3rem 1rem;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .footer-links {
+            list-style: none;
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+        }
+
+        .footer-links a {
+            color: var(--light-text);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 1.2rem;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .copyright {
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .logo {
@@ -450,6 +572,10 @@
             
             .main-image-container {
                 height: 300px;
+            }
+            
+            .modal-product-content {
+                flex-direction: column;
             }
         }
 
@@ -468,6 +594,14 @@
             
             .modal-product-content {
                 gap: 1.5rem;
+            }
+            
+            .filters {
+                gap: 0.5rem;
+            }
+            
+            .filter-btn {
+                padding: 0.5rem 1rem;
             }
         }
     </style>
@@ -564,17 +698,17 @@
     <!-- Footer -->
     <footer>
         <div class="footer-content">
-            <div class="footer-column">
-                <h3>Contact Info</h3>
-                <ul class="footer-links">
-                    <li><a href="https://wa.me/201117616766" target="_blank" style="color:#d4af7a; text-decoration:none;">
-                        <i class="fab fa-whatsapp"></i> +20 111 761 6766
-                    </a></li>
-                </ul>
+            <ul class="footer-links">
+                <li><a href="https://wa.me/201117616766" target="_blank">
+                    <i class="fab fa-whatsapp"></i> +20 111 761 6766
+                </a></li>
+                <li><a href="#"><i class="fab fa-facebook"></i> Facebook</a></li>
+                <li><a href="#"><i class="fab fa-instagram"></i> Instagram</a></li>
+                <li><a href="#"><i class="fas fa-envelope"></i> Email</a></li>
+            </ul>
+            <div class="copyright">
+                <p>&copy; 2023 ZOZO Store. All Rights Reserved. Handmade with Love in Egypt.</p>
             </div>
-        </div>
-        <div class="copyright">
-            <p>&copy; 2023 ZOZO Store. All Rights Reserved. Handmade with Love in Egypt.</p>
         </div>
     </footer>
 
@@ -590,7 +724,7 @@
 
     <script>
         // Configuration
-        const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR1Q0KpO1iE8L4sR6D9aKX9t9dXy2aY8qjJ7gY7f8L6o8dF2g4XK1f5X9bQ8Wl0o3jZ7v3pD5Qv1j/pub?output=csv';
+        const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTaVeQmp8Br-s5uHaNjo2EFdkcR6s0kgQS61MrvLBXMthgMWjiAAlVhPt7Y8XABev4DGd9kl7EVKC24/pub?output=csv';
         const IMAGE_BASE_URL = 'https://raw.githubusercontent.com/Zozostore/Zozostore/main/images/';
         const PRODUCTS_PER_PAGE = 25;
         
@@ -677,7 +811,7 @@
                     
                     // Convert price to number if needed
                     if (typeof product.Price === 'string') {
-                        product.Price = product.Price.replace(/,/g, '');
+                        product.Price = parseFloat(product.Price.replace(/[^\d.]/g, ''));
                     }
                 });
                 
@@ -702,18 +836,26 @@
                 const line = lines[i].trim();
                 if (!line) continue;
                 
-                const values = line.split(',');
+                // Split while preserving quoted commas
+                const values = line.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
                 const product = {};
                 
-                for (let j = 0; j < headers.length; j++) {
-                    if (j < values.length) {
-                        product[headers[j]] = values[j].trim();
-                    } else {
-                        product[headers[j]] = '';
+                if (values) {
+                    for (let j = 0; j < headers.length; j++) {
+                        if (j < values.length) {
+                            let value = values[j].trim();
+                            // Remove surrounding quotes if present
+                            if (value.startsWith('"') && value.endsWith('"')) {
+                                value = value.slice(1, -1);
+                            }
+                            product[headers[j]] = value;
+                        } else {
+                            product[headers[j]] = '';
+                        }
                     }
+                    
+                    products.push(product);
                 }
-                
-                products.push(product);
             }
             
             return products;
