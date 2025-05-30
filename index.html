@@ -405,6 +405,38 @@
             to { transform: rotate(360deg); }
         }
 
+        /* Error Message */
+        .error-message {
+            background: #ffebee;
+            border: 1px solid #ffcdd2;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            text-align: center;
+            color: #c62828;
+            margin: 2rem auto;
+            max-width: 800px;
+        }
+
+        .error-message i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .reload-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .reload-btn:hover {
+            background: #c19e6b;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .logo {
@@ -557,244 +589,8 @@
     </div>
 
     <script>
-        // Sample product data (would normally come from your Google Sheet)
-        const sampleProducts = [
-            {
-                "Product Name": "Gold Plated Ring",
-                "Category": "Rings",
-                "Description": "Elegant gold plated ring with intricate detailing, perfect for any occasion.",
-                "Price": "350",
-                "Images": [
-                    "ring1.jpg",
-                    "ring2.jpg",
-                    "ring3.jpg"
-                ]
-            },
-            {
-                "Product Name": "Silver Necklace",
-                "Category": "Necklace",
-                "Description": "Beautiful silver necklace with a delicate pendant that shines in the light.",
-                "Price": "450",
-                "Images": [
-                    "necklace1.jpg",
-                    "necklace2.jpg"
-                ]
-            },
-            {
-                "Product Name": "Pearl Bangle",
-                "Category": "Bangle",
-                "Description": "Classic pearl bangle that adds sophistication to any outfit.",
-                "Price": "290",
-                "Images": [
-                    "bangle1.jpg"
-                ]
-            },
-            {
-                "Product Name": "Diamond Ring",
-                "Category": "Rings",
-                "Description": "Exquisite diamond ring that sparkles with every movement.",
-                "Price": "1200",
-                "Images": [
-                    "diamond1.jpg",
-                    "diamond2.jpg"
-                ]
-            },
-            {
-                "Product Name": "Emerald Necklace",
-                "Category": "Necklace",
-                "Description": "Stunning emerald necklace that makes a statement with its vibrant green stone.",
-                "Price": "890",
-                "Images": [
-                    "emerald1.jpg"
-                ]
-            },
-            {
-                "Product Name": "Gold Bangle",
-                "Category": "Bangle",
-                "Description": "Solid gold bangle with engraved patterns for a luxurious look.",
-                "Price": "750",
-                "Images": [
-                    "bangle2.jpg",
-                    "bangle3.jpg"
-                ]
-            },
-            {
-                "Product Name": "Sapphire Ring",
-                "Category": "Rings",
-                "Description": "Deep blue sapphire ring set in sterling silver for a timeless piece.",
-                "Price": "540",
-                "Images": [
-                    "sapphire1.jpg"
-                ]
-            },
-            {
-                "Product Name": "Ruby Pendant",
-                "Category": "Necklace",
-                "Description": "Vibrant ruby pendant on a delicate gold chain for a touch of elegance.",
-                "Price": "670",
-                "Images": [
-                    "ruby1.jpg",
-                    "ruby2.jpg"
-                ]
-            },
-            {
-                "Product Name": "Silver Bangle Set",
-                "Category": "Bangle",
-                "Description": "Set of three silver bangles that can be worn together or separately.",
-                "Price": "380",
-                "Images": [
-                    "set1.jpg"
-                ]
-            },
-            {
-                "Product Name": "Pearl Ring",
-                "Category": "Rings",
-                "Description": "Elegant pearl ring with diamond accents for a sophisticated look.",
-                "Price": "410",
-                "Images": [
-                    "pearl_ring1.jpg",
-                    "pearl_ring2.jpg"
-                ]
-            },
-            {
-                "Product Name": "Gold Chain Necklace",
-                "Category": "Necklace",
-                "Description": "Classic gold chain necklace that complements any outfit.",
-                "Price": "320",
-                "Images": [
-                    "chain1.jpg"
-                ]
-            },
-            {
-                "Product Name": "Enamel Bangle",
-                "Category": "Bangle",
-                "Description": "Colorful enamel bangle with intricate patterns for a pop of color.",
-                "Price": "280",
-                "Images": [
-                    "enamel1.jpg"
-                ]
-            },
-            {
-                "Product Name": "Amethyst Ring",
-                "Category": "Rings",
-                "Description": "Beautiful amethyst ring set in rose gold for a romantic touch.",
-                "Price": "390",
-                "Images": [
-                    "amethyst1.jpg"
-                ]
-            },
-            {
-                "Product Name": "Crystal Necklace",
-                "Category": "Necklace",
-                "Description": "Sparkling crystal necklace that catches the light beautifully.",
-                "Price": "310",
-                "Images": [
-                    "crystal1.jpg"
-                ]
-            },
-            {
-                "Product Name": "Stackable Bangles",
-                "Category": "Bangle",
-                "Description": "Set of five thin stackable bangles in mixed metals for a modern look.",
-                "Price": "450",
-                "Images": [
-                    "stack1.jpg",
-                    "stack2.jpg"
-                ]
-            },
-            {
-                "Product Name": "Opal Ring",
-                "Category": "Rings",
-                "Description": "Unique opal ring with iridescent colors that change with the light.",
-                "Price": "520",
-                "Images": [
-                    "opal1.jpg"
-                ]
-            },
-            {
-                "Product Name": "Layered Necklace Set",
-                "Category": "Necklace",
-                "Description": "Set of three layered necklaces in varying lengths for a trendy look.",
-                "Price": "480",
-                "Images": [
-                    "layered1.jpg"
-                ]
-            },
-            {
-                "Product Name": "Cuff Bangle",
-                "Category": "Bangle",
-                "Description": "Wide cuff bangle with engraved geometric patterns for a bold statement.",
-                "Price": "360",
-                "Images": [
-                    "cuff1.jpg"
-                ]
-            },
-            {
-                "Product Name": "Turquoise Ring",
-                "Category": "Rings",
-                "Description": "Vibrant turquoise ring set in sterling silver with intricate detailing.",
-                "Price": "290",
-                "Images": [
-                    "turquoise1.jpg"
-                ]
-            },
-            {
-                "Product Name": "Choker Necklace",
-                "Category": "Necklace",
-                "Description": "Elegant velvet choker necklace with a crystal pendant for a touch of glamour.",
-                "Price": "270",
-                "Images": [
-                    "choker1.jpg"
-                ]
-            },
-            {
-                "Product Name": "Hinged Bangle",
-                "Category": "Bangle",
-                "Description": "Easy-to-wear hinged bangle with a secure clasp and smooth finish.",
-                "Price": "330",
-                "Images": [
-                    "hinged1.jpg"
-                ]
-            },
-            {
-                "Product Name": "Citrine Ring",
-                "Category": "Rings",
-                "Description": "Sunny citrine ring in yellow gold that brings warmth to any look.",
-                "Price": "370",
-                "Images": [
-                    "citrine1.jpg"
-                ]
-            },
-            {
-                "Product Name": "Pendant Necklace",
-                "Category": "Necklace",
-                "Description": "Delicate pendant necklace with a meaningful symbol for personal style.",
-                "Price": "290",
-                "Images": [
-                    "pendant1.jpg"
-                ]
-            },
-            {
-                "Product Name": "Adjustable Bangle",
-                "Category": "Bangle",
-                "Description": "Versatile adjustable bangle that fits any wrist size comfortably.",
-                "Price": "250",
-                "Images": [
-                    "adjustable1.jpg"
-                ]
-            },
-            {
-                "Product Name": "Garnet Ring",
-                "Category": "Rings",
-                "Description": "Deep red garnet ring set in white gold for a classic, timeless look.",
-                "Price": "490",
-                "Images": [
-                    "garnet1.jpg"
-                ]
-            }
-        ];
-
         // Configuration
+        const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR1Q0KpO1iE8L4sR6D9aKX9t9dXy2aY8qjJ7gY7f8L6o8dF2g4XK1f5X9bQ8Wl0o3jZ7v3pD5Qv1j/pub?output=csv';
         const IMAGE_BASE_URL = 'https://raw.githubusercontent.com/Zozostore/Zozostore/main/images/';
         const PRODUCTS_PER_PAGE = 25;
         
@@ -813,12 +609,8 @@
         
         // Initialize the page
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize products
-            allProducts = sampleProducts;
-            filteredProducts = [...allProducts];
-            
-            renderProducts();
-            renderPagination();
+            // Fetch products from Google Sheet
+            fetchProducts();
             
             // Product filtering functionality
             const filterButtons = document.querySelectorAll('.filter-btn');
@@ -860,10 +652,77 @@
             });
         });
         
+        // Fetch products from Google Sheet
+        async function fetchProducts() {
+            try {
+                showLoading();
+                
+                // Fetch the CSV data
+                const response = await fetch(GOOGLE_SHEET_URL);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
+                }
+                
+                const csvData = await response.text();
+                allProducts = parseCSV(csvData);
+                
+                // Process the data
+                allProducts.forEach(product => {
+                    // Split images string into array
+                    if (product.Images) {
+                        product.Images = product.Images.split(',').map(img => img.trim());
+                    } else {
+                        product.Images = [];
+                    }
+                    
+                    // Convert price to number if needed
+                    if (typeof product.Price === 'string') {
+                        product.Price = product.Price.replace(/,/g, '');
+                    }
+                });
+                
+                filteredProducts = [...allProducts];
+                
+                renderProducts();
+                renderPagination();
+            } catch (error) {
+                console.error('Error fetching products:', error);
+                showError('Failed to load products. Please check your internet connection and try again.');
+            }
+        }
+        
+        // Parse CSV data into JSON
+        function parseCSV(csv) {
+            const lines = csv.split('\n');
+            const headers = lines[0].split(',').map(h => h.trim());
+            
+            const products = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                
+                const values = line.split(',');
+                const product = {};
+                
+                for (let j = 0; j < headers.length; j++) {
+                    if (j < values.length) {
+                        product[headers[j]] = values[j].trim();
+                    } else {
+                        product[headers[j]] = '';
+                    }
+                }
+                
+                products.push(product);
+            }
+            
+            return products;
+        }
+        
         // Render products to the grid
         function renderProducts() {
             if (filteredProducts.length === 0) {
-                productsContainer.innerHTML = '<p class="no-products">No products found.</p>';
+                productsContainer.innerHTML = '<p class="no-products">No products found matching your criteria.</p>';
                 return;
             }
             
@@ -1064,6 +923,30 @@
             });
             
             productModal.style.display = 'block';
+        }
+        
+        // Show loading indicator
+        function showLoading() {
+            productsContainer.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Loading products...</p>
+                </div>
+            `;
+        }
+        
+        // Show error message
+        function showError(message) {
+            productsContainer.innerHTML = `
+                <div class="error-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Error Loading Products</h3>
+                    <p>${message}</p>
+                    <button class="reload-btn" onclick="fetchProducts()">
+                        <i class="fas fa-sync-alt"></i> Try Again
+                    </button>
+                </div>
+            `;
         }
     </script>
 </body>
