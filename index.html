@@ -283,7 +283,7 @@
             color: white;
         }
 
-        /* Product Detail Modal */
+        /* Product Detail Modal - Updated for larger size */
         .product-modal {
             display: none;
             position: fixed;
@@ -299,12 +299,16 @@
 
         .modal-content {
             background-color: white;
-            max-width: 900px;
+            max-width: 95%;
+            width: 95%;
             margin: 2rem auto;
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
             position: relative;
             padding: 2rem;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
         }
 
         .close-modal {
@@ -315,6 +319,7 @@
             color: #777;
             cursor: pointer;
             transition: var(--transition);
+            z-index: 1001;
         }
 
         .close-modal:hover {
@@ -326,17 +331,21 @@
             display: flex;
             gap: 2rem;
             flex-wrap: wrap;
+            height: 100%;
         }
 
         .modal-images {
             flex: 1;
             min-width: 300px;
             position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         .main-image-container {
             position: relative;
-            height: 400px;
+            height: 70%;
             overflow: hidden;
             border-radius: var(--border-radius);
             margin-bottom: 1rem;
@@ -349,6 +358,10 @@
 
         .main-image-container.video-active {
             background-color: #000;
+        }
+
+        .main-image-container.grabbing {
+            cursor: grabbing;
         }
 
         .main-image {
@@ -391,6 +404,7 @@
             overflow-x: auto;
             padding-bottom: 0.5rem;
             justify-content: center;
+            height: 20%;
         }
 
         .thumbnail {
@@ -457,6 +471,9 @@
         .modal-details {
             flex: 1;
             min-width: 300px;
+            height: 100%;
+            overflow-y: auto;
+            padding: 1rem;
         }
 
         .modal-title {
@@ -766,11 +783,16 @@
             }
             
             .main-image-container {
-                height: 300px;
+                height: 50%;
             }
             
             .modal-product-content {
                 flex-direction: column;
+                height: auto;
+            }
+            
+            .modal-images, .modal-details {
+                height: auto;
             }
             
             .review-nav {
@@ -799,6 +821,7 @@
             
             .modal-content {
                 padding: 1.5rem;
+                height: 85vh;
             }
             
             .modal-product-content {
@@ -813,8 +836,8 @@
                 padding: 0.5rem 1rem;
             }
             
-            .video-container {
-                height: 300px;
+            .main-image-container {
+                height: 40%;
             }
         }
         
@@ -1190,7 +1213,7 @@
             });
         }
         
-        // Fetch products from Google Sheet with cache busting
+        // Fetch products from Google Sheet with cache busting and duplicate prevention
         async function fetchProducts() {
             try {
                 showLoading();
@@ -1206,7 +1229,21 @@
                 }
                 
                 const csvData = await response.text();
-                allProducts = parseCSV(csvData);
+                const parsedProducts = parseCSV(csvData);
+                
+                // Remove duplicate products by name (only keep the first occurrence)
+                const uniqueProducts = [];
+                const seenProductNames = {};
+                
+                parsedProducts.forEach(product => {
+                    const productName = product['Product Name'];
+                    if (!seenProductNames[productName]) {
+                        seenProductNames[productName] = true;
+                        uniqueProducts.push(product);
+                    }
+                });
+                
+                allProducts = uniqueProducts;
                 
                 // Process the data
                 allProducts.forEach(product => {
@@ -1631,15 +1668,43 @@
                 });
             }
             
-            // Initialize zoom only for images
+            // Initialize zoom and drag for images
+            const zoomLevelElement = document.getElementById('zoomLevel');
+            let zoomLevel = 0;
+            let translateX = 0;
+            let translateY = 0;
+            let startX = 0;
+            let startY = 0;
+            let isDragging = false;
+            let currentImage = null;
+            
+            function getCurrentScale() {
+                switch(zoomLevel) {
+                    case 1: return 2;
+                    case 2: return 4;
+                    case 3: return 8;
+                    default: return 1;
+                }
+            }
+            
+            function updateImageTransform(img) {
+                img.style.transform = `scale(${getCurrentScale()}) translate(${translateX}px, ${translateY}px)`;
+            }
+            
+            function resetDrag() {
+                translateX = 0;
+                translateY = 0;
+                if (currentImage) {
+                    currentImage.style.transform = `scale(${getCurrentScale()})`;
+                }
+            }
+            
             mainImages.forEach(img => {
-                // Initialize zoom and drag state
-                let zoomLevel = 0;
-                let zoomLevelIndicator = document.getElementById('zoomLevel');
-                
                 img.addEventListener('click', function(e) {
                     // Only zoom if it's an image and not a video
                     if (mediaItems[currentMediaIndex].type === 'video') return;
+                    
+                    currentImage = this;
                     
                     // Get click position relative to image
                     const rect = this.getBoundingClientRect();
@@ -1653,41 +1718,132 @@
                     // Cycle through zoom levels: 0 -> 2 -> 4 -> 8 -> 0
                     zoomLevel = (zoomLevel + 1) % 4;
                     
-                    // Apply zoom transformation
+                    // Reset drag position when changing zoom level
+                    if (zoomLevel === 0) {
+                        resetDrag();
+                    } else {
+                        this.style.transformOrigin = `${originX}% ${originY}%`;
+                    }
+                    
+                    // Update zoom level indicator
                     switch(zoomLevel) {
                         case 0:
-                            this.style.transform = 'none';
-                            this.style.transformOrigin = 'center center';
+                            zoomLevelElement.textContent = 'Click image to zoom';
                             this.style.cursor = 'zoom-in';
-                            zoomLevelIndicator.textContent = 'Click image to zoom';
                             break;
                         case 1:
-                            this.style.transform = `scale(2)`;
-                            this.style.transformOrigin = `${originX}% ${originY}%`;
+                            zoomLevelElement.textContent = 'Zoom: 2x - Click to zoom more';
                             this.style.cursor = 'zoom-in';
-                            zoomLevelIndicator.textContent = 'Zoom: 2x - Click to zoom more';
                             break;
                         case 2:
-                            this.style.transform = `scale(4)`;
-                            this.style.transformOrigin = `${originX}% ${originY}%`;
+                            zoomLevelElement.textContent = 'Zoom: 4x - Click to zoom more';
                             this.style.cursor = 'zoom-in';
-                            zoomLevelIndicator.textContent = 'Zoom: 4x - Click to zoom more';
                             break;
                         case 3:
-                            this.style.transform = `scale(8)`;
-                            this.style.transformOrigin = `${originX}% ${originY}%`;
+                            zoomLevelElement.textContent = 'Zoom: 8x - Click to reset';
                             this.style.cursor = 'zoom-out';
-                            zoomLevelIndicator.textContent = 'Zoom: 8x - Click to reset';
                             break;
                     }
+                    
+                    updateImageTransform(this);
+                });
+                
+                // Drag functionality
+                img.addEventListener('mousedown', function(e) {
+                    if (zoomLevel === 0) return;
+                    
+                    isDragging = true;
+                    mainImageContainer.classList.add('grabbing');
+                    startX = e.clientX - translateX;
+                    startY = e.clientY - translateY;
                 });
             });
+            
+            // Global mouse move event for dragging
+            document.addEventListener('mousemove', function(e) {
+                if (!isDragging || zoomLevel === 0 || !currentImage) return;
+                
+                translateX = e.clientX - startX;
+                translateY = e.clientY - startY;
+                
+                updateImageTransform(currentImage);
+            });
+            
+            document.addEventListener('mouseup', function() {
+                if (isDragging) {
+                    isDragging = false;
+                    mainImageContainer.classList.remove('grabbing');
+                }
+            });
+            
+            // Touch events for mobile
+            mainImages.forEach(img => {
+                img.addEventListener('touchstart', function(e) {
+                    if (zoomLevel === 0) return;
+                    
+                    isDragging = true;
+                    mainImageContainer.classList.add('grabbing');
+                    const touch = e.touches[0];
+                    startX = touch.clientX - translateX;
+                    startY = touch.clientY - translateY;
+                });
+            });
+            
+            document.addEventListener('touchmove', function(e) {
+                if (!isDragging || zoomLevel === 0 || !currentImage) return;
+                
+                const touch = e.touches[0];
+                translateX = touch.clientX - startX;
+                translateY = touch.clientY - startY;
+                
+                updateImageTransform(currentImage);
+            });
+            
+            document.addEventListener('touchend', function() {
+                if (isDragging) {
+                    isDragging = false;
+                    mainImageContainer.classList.remove('grabbing');
+                }
+            });
+            
+            // Reset on media change
+            function resetZoomOnMediaChange() {
+                zoomLevel = 0;
+                resetDrag();
+                zoomLevelElement.textContent = 'Click image to zoom';
+                if (currentImage) {
+                    currentImage.style.cursor = 'zoom-in';
+                    currentImage.style.transform = 'none';
+                    currentImage.style.transformOrigin = 'center center';
+                }
+            }
             
             // Back button functionality
             const backBtn = document.getElementById('backToProducts');
             backBtn.addEventListener('click', () => {
                 productModal.style.display = 'none';
+                resetZoomOnMediaChange();
             });
+            
+            // Reset zoom when changing media
+            thumbnails.forEach(thumb => {
+                thumb.addEventListener('click', () => {
+                    resetZoomOnMediaChange();
+                });
+            });
+            
+            if (mediaItems.length > 1) {
+                const prevImageBtn = document.getElementById('prevImage');
+                const nextImageBtn = document.getElementById('nextImage');
+                
+                prevImageBtn.addEventListener('click', () => {
+                    resetZoomOnMediaChange();
+                });
+                
+                nextImageBtn.addEventListener('click', () => {
+                    resetZoomOnMediaChange();
+                });
+            }
             
             productModal.style.display = 'block';
         }
