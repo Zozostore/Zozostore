@@ -371,7 +371,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: zoom-in;
+            cursor: pointer;
         }
 
         .main-image {
@@ -946,18 +946,21 @@
         function generateImageArray(baseName) {
             if (!baseName) return [];
             
+            // Remove file extension if present
+            const base = baseName.split('.')[0];
+            
             const formats = ['jpg', 'jpeg', 'png', 'webp'];
             const images = [];
             
             // Main image without number
             for (const format of formats) {
-                images.push(`${baseName}.${format}`);
+                images.push(`${base}.${format}`);
             }
             
-            // Numbered images (1-20)
-            for (let i = 1; i <= 20; i++) {
+            // Numbered images (0-20) to match your GitHub files
+            for (let i = 0; i <= 20; i++) {
                 for (const format of formats) {
-                    images.push(`${baseName}${i}.${format}`);
+                    images.push(`${base}${i}.${format}`);
                 }
             }
             
@@ -1280,11 +1283,22 @@
                 </div>
             `;
             
-            // Add zoom functionality
+            // Add zoom functionality with click position tracking
             const mainImage = document.getElementById('mainImage');
             if (mainImage) {
-                mainImage.addEventListener('click', function() {
-                    this.classList.toggle('zoomed');
+                mainImage.addEventListener('click', function(e) {
+                    if (this.classList.contains('zoomed')) {
+                        this.classList.remove('zoomed');
+                    } else {
+                        // Calculate click position relative to the image
+                        const rect = this.getBoundingClientRect();
+                        const x = (e.clientX - rect.left) / rect.width * 100;
+                        const y = (e.clientY - rect.top) / rect.height * 100;
+                        
+                        // Set transform origin to the click position
+                        this.style.transformOrigin = `${x}% ${y}%`;
+                        this.classList.add('zoomed');
+                    }
                 });
             }
             
@@ -1309,6 +1323,7 @@
                         
                         // Reset zoom state
                         mainImage.classList.remove('zoomed');
+                        mainImage.style.transformOrigin = 'center';
                     });
                 });
                 
@@ -1322,6 +1337,7 @@
                     
                     // Reset zoom state
                     mainImage.classList.remove('zoomed');
+                    mainImage.style.transformOrigin = 'center';
                 });
                 
                 nextImageBtn.addEventListener('click', () => {
@@ -1334,6 +1350,7 @@
                     
                     // Reset zoom state
                     mainImage.classList.remove('zoomed');
+                    mainImage.style.transformOrigin = 'center';
                 });
             }
             
