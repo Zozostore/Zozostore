@@ -866,6 +866,11 @@
             font-size: 0.8rem;
             z-index: 10;
         }
+        
+        /* New style to fix image cursor */
+        .main-image {
+            cursor: zoom-in;
+        }
     </style>
 </head>
 <body>
@@ -1504,7 +1509,7 @@
             paginationContainer.appendChild(nextBtn);
         }
         
-        // Open product modal with details
+        // Open product modal with details - FIXED VERSION
         function openProductModal(product) {
             const productName = product['Product Name'] || 'Unnamed Product';
             const category = product.Category || 'Uncategorized';
@@ -1553,29 +1558,33 @@
                 thumbnailsHTML = '<p>No media available</p>';
             }
             
+            // Generate main media HTML
+            let mainMediaHTML = '';
+            mediaItems.forEach((item, index) => {
+                if (item.type === 'video') {
+                    mainMediaHTML += `
+                        <div class="video-container ${index === 0 ? 'active' : ''}" data-index="${index}">
+                            <video class="product-video" autoplay muted loop playsinline>
+                                <source src="${item.url}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    `;
+                } else {
+                    mainMediaHTML += `
+                        <img src="${item.url}" 
+                             alt="${productName}" 
+                             class="main-image" 
+                             data-index="${index}"
+                             onerror="this.onerror=null; this.src='https://via.placeholder.com/400x400?text=Image+Not+Available'">
+                    `;
+                }
+            });
+            
             modalProductContent.innerHTML = `
                 <div class="modal-images">
                     <div class="main-image-container" id="mainImageContainer">
-                        ${mediaItems.map((item, index) => {
-                            if (item.type === 'video') {
-                                return `
-                                    <div class="video-container ${index === 0 ? 'active' : ''}" data-index="${index}">
-                                        <video class="product-video" autoplay muted loop playsinline>
-                                            <source src="${item.url}" type="video/mp4">
-                                            Your browser does not support the video tag.
-                                        </video>
-                                    </div>
-                                `;
-                            } else {
-                                return `
-                                    <img src="${item.url}" 
-                                         alt="${productName}" 
-                                         class="main-image" 
-                                         data-index="${index}"
-                                         onerror="this.onerror=null; this.src='https://via.placeholder.com/400x400?text=Image+Not+Available'">
-                                `;
-                            }
-                        }).join('')}
+                        ${mainMediaHTML}
                         ${mediaItems.length > 1 ? `
                             <div class="image-nav prev-image" id="prevImage">
                                 <i class="fas fa-chevron-left"></i>
@@ -1607,30 +1616,34 @@
             const mainImages = mainImageContainer.querySelectorAll('.main-image');
             const thumbnails = modalProductContent.querySelectorAll('.thumbnail');
             
+            // Create a unified array of media elements in correct order
+            const mediaElements = Array.from(mainImageContainer.children)
+                .filter(el => el.classList.contains('video-container') || el.classList.contains('main-image'));
+            
             let currentMediaIndex = 0;
             
             function showMedia(index) {
                 // Hide all media
-                videoContainers.forEach(container => {
-                    container.classList.remove('active');
-                    const video = container.querySelector('.product-video');
-                    if (video) video.pause();
-                });
-                
-                mainImages.forEach(img => {
-                    img.classList.remove('active');
+                mediaElements.forEach(el => {
+                    if (el.classList.contains('video-container')) {
+                        el.classList.remove('active');
+                        const video = el.querySelector('.product-video');
+                        if (video) video.pause();
+                    } else if (el.classList.contains('main-image')) {
+                        el.classList.remove('active');
+                    }
                 });
                 
                 // Show selected media
-                if (mediaItems[index].type === 'video') {
-                    videoContainers[index].classList.add('active');
-                    const video = videoContainers[index].querySelector('.product-video');
+                if (mediaElements[index].classList.contains('video-container')) {
+                    mediaElements[index].classList.add('active');
+                    const video = mediaElements[index].querySelector('.product-video');
                     if (video) {
                         video.play();
                         mainImageContainer.classList.add('video-active');
                     }
                 } else {
-                    mainImages[index].classList.add('active');
+                    mediaElements[index].classList.add('active');
                     mainImageContainer.classList.remove('video-active');
                 }
                 
@@ -1695,10 +1708,11 @@
                 translateX = 0;
                 translateY = 0;
                 if (currentImage) {
-                    currentImage.style.transform = `scale(${getCurrentScale()})`;
+                    updateImageTransform(currentImage);
                 }
             }
             
+            // Add zoom functionality to images
             mainImages.forEach(img => {
                 img.addEventListener('click', function(e) {
                     // Only zoom if it's an image and not a video
