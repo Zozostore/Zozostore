@@ -30,7 +30,6 @@
             background-color: var(--light-bg);
             color: var(--dark-text);
             line-height: 1.6;
-            overflow-x: hidden;
         }
 
         /* Header Styles */
@@ -184,104 +183,6 @@
             z-index: 10;
         }
 
-        /* Product Image Carousel */
-        .product-carousel {
-            position: relative;
-            height: 100%;
-            width: 100%;
-            overflow: hidden;
-        }
-
-        .carousel-inner {
-            position: relative;
-            height: 100%;
-            transition: transform 0.5s ease;
-        }
-
-        .carousel-slide {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .carousel-slide.active {
-            opacity: 1;
-            z-index: 1;
-        }
-
-        .carousel-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.5);
-            color: white;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-            z-index: 20;
-            opacity: 0;
-        }
-
-        .product-image-container:hover .carousel-nav {
-            opacity: 1;
-        }
-
-        .carousel-nav:hover {
-            background: rgba(0, 0, 0, 0.8);
-            transform: translateY(-50%) scale(1.1);
-        }
-
-        .carousel-prev {
-            left: 10px;
-        }
-
-        .carousel-next {
-            right: 10px;
-        }
-
-        .carousel-dots {
-            position: absolute;
-            bottom: 15px;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: center;
-            gap: 6px;
-            z-index: 20;
-            opacity: 0;
-            transition: var(--transition);
-        }
-
-        .product-image-container:hover .carousel-dots {
-            opacity: 1;
-        }
-
-        .carousel-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.5);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .carousel-dot.active {
-            background: white;
-            transform: scale(1.2);
-        }
-
         /* Pagination */
         .pagination {
             display: flex;
@@ -342,7 +243,6 @@
             color: #777;
             cursor: pointer;
             transition: var(--transition);
-            z-index: 1001;
         }
 
         .close-modal:hover {
@@ -371,19 +271,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
         }
 
         .main-image {
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
-            transition: transform 0.3s ease;
-        }
-
-        .main-image.zoomed {
-            transform: scale(2);
-            cursor: zoom-out;
         }
 
         .thumbnails {
@@ -423,12 +316,10 @@
             cursor: pointer;
             transition: var(--transition);
             z-index: 10;
-            opacity: 0.7;
         }
 
         .image-nav:hover {
             background: rgba(0, 0, 0, 0.8);
-            opacity: 1;
         }
 
         .prev-image {
@@ -832,7 +723,7 @@
     </div>
 
     <script>
-        // Configuration - FIXED IMAGE BASE URL
+        // Configuration
         const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTaVeQmp8Br-s5uHaNjo2EFdkcR6s0kgQS61MrvLBXMthgMWjiAAlVhPt7Y8XABev4DGd9kl7EVKC24/pub?output=csv';
         const IMAGE_BASE_URL = 'https://raw.githubusercontent.com/Zozostore/Zozostore/main/';
         const PRODUCTS_PER_PAGE = 25;
@@ -915,11 +806,12 @@
                 
                 // Process the data
                 allProducts.forEach(product => {
-                    // Get the image base name
-                    const imageBase = product['Images'] || '';
-                    
-                    // Generate image URLs based on base name
-                    product.Images = generateImageArray(imageBase);
+                    // Split images string into array
+                    if (product.Images) {
+                        product.Images = product.Images.split(',').map(img => img.trim());
+                    } else {
+                        product.Images = [];
+                    }
                     
                     // Convert price to number if needed
                     if (typeof product.Price === 'string') {
@@ -942,49 +834,50 @@
             }
         }
         
-            // FIXED: Generate image array by checking which images actually exist
-    function generateImageArray(baseName) {
-        if (!baseName) return [];
-        
-        // Remove file extension if present
-        const base = baseName.split('.')[0];
-        const extensions = ['.jpg', '.jpeg', '.png', '.webp'];
-        const images = [];
-        
-        // Create a function to check if image exists
-        function checkImageExists(url, callback) {
-            const img = new Image();
-            img.onload = function() { callback(true); };
-            img.onerror = function() { callback(false); };
-            img.src = url;
-        }
-        
-        // Check base name without numbers first
-        for (const ext of extensions) {
-            const imgUrl = IMAGE_BASE_URL + base + ext;
-            checkImageExists(imgUrl, function(exists) {
-                if (exists) {
-                    images.push(base + ext);
+        // Improved CSV parsing
+        function parseCSV(csv) {
+            const lines = csv.split('\n');
+            const headers = lines[0].split(',').map(h => h.trim());
+            
+            const products = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                
+                // Split while preserving quoted commas
+                const values = [];
+                let current = '';
+                let inQuotes = false;
+                
+                for (let j = 0; j < line.length; j++) {
+                    const char = line[j];
+                    
+                    if (char === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                        values.push(current.trim());
+                        current = '';
+                    } else {
+                        current += char;
+                    }
                 }
-            });
-        }
-        
-        // Check numbered variations (0-9) if base image not found
-        if (images.length === 0) {
-            for (let i = 0; i <= 9; i++) {
-                for (const ext of extensions) {
-                    const imgUrl = IMAGE_BASE_URL + base + i + ext;
-                    checkImageExists(imgUrl, function(exists) {
-                        if (exists) {
-                            images.push(base + i + ext);
-                        }
-                    });
+                values.push(current.trim()); // Push last value
+                
+                // Skip if not enough values
+                if (values.length < headers.length) continue;
+                
+                const product = {};
+                for (let j = 0; j < headers.length; j++) {
+                    product[headers[j]] = values[j] || '';
                 }
+                
+                products.push(product);
             }
+            
+            return products;
         }
         
-        return images;
-    }
         // Render products to the grid
         function renderProducts() {
             if (filteredProducts.length === 0) {
@@ -1012,145 +905,23 @@
                     'https://via.placeholder.com/300x300?text=Image+Not+Available';
                 
                 const productCard = document.createElement('div');
-            productCard.className = 'product-card';
-            
-            // Only create carousel if images exist
-            let carouselHTML = '';
-            if (images.length > 0) {
-                carouselHTML = `
-                    <div class="product-carousel">
-                        <div class="carousel-inner">
-                            ${images.map((img, index) => `
-                                <div class="carousel-slide ${index === 0 ? 'active' : ''}">
-                                    <img src="${IMAGE_BASE_URL}${encodeURIComponent(img.trim())}" 
-                                         alt="${productName}" 
-                                         class="product-image"
-                                         onerror="this.onerror=null; this.src='https://via.placeholder.com/300x300?text=Image+Not+Available'">
-                                </div>
-                            `).join('')}
-                        </div>
-                        ${images.length > 1 ? `
-                            <div class="carousel-nav carousel-prev">
-                                <i class="fas fa-chevron-left"></i>
-                            </div>
-                            <div class="carousel-nav carousel-next">
-                                <i class="fas fa-chevron-right"></i>
-                            </div>
-                            <div class="carousel-dots">
-                                ${images.map((_, index) => `
-                                    <div class="carousel-dot ${index === 0 ? 'active' : ''}" data-index="${index}"></div>
-                                `).join('')}
-                            </div>
-                        ` : ''}
+                productCard.className = 'product-card';
+                productCard.innerHTML = `
+                    <div class="product-image-container">
+                        <img src="${mainImageUrl}" alt="${productName}" class="product-image"
+                             onerror="this.onerror=null; this.src='https://via.placeholder.com/300x300?text=Image+Not+Available'">
+                        <span class="product-category">${category}</span>
+                    </div>
+                    <div class="product-details">
+                        <h3 class="product-title">${productName}</h3>
+                        <p class="product-description">${description.substring(0, 80)}${description.length > 80 ? '...' : ''}</p>
+                        <div class="product-price">EGP ${price.toFixed(2)}</div>
                     </div>
                 `;
-            } else {
-                carouselHTML = `
-                    <div class="product-image-container" style="display: flex; align-items: center; justify-content: center;">
-                        <div style="text-align: center; padding: 1rem;">
-                            <i class="fas fa-image" style="font-size: 3rem; color: #ddd;"></i>
-                            <p>No images available</p>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            productCard.innerHTML = `
-                <div class="product-image-container">
-                    ${carouselHTML}
-                    <span class="product-category">${category}</span>
-                </div>
-                <div class="product-details">
-                    <h3 class="product-title">${productName}</h3>
-                    <p class="product-description">${description.substring(0, 80)}${description.length > 80 ? '...' : ''}</p>
-                    <div class="product-price">EGP ${price.toFixed(2)}</div>
-                </div>
-            `;
+                
                 productCard.addEventListener('click', () => openProductModal(product));
-                
-                // Add carousel functionality
-                const carousel = productCard.querySelector('.product-carousel');
-                if (carousel) {
-                    initCarousel(carousel);
-                }
-                
                 productsContainer.appendChild(productCard);
             });
-        }
-        
-        // Initialize carousel functionality
-        function initCarousel(carousel) {
-            const slides = carousel.querySelectorAll('.carousel-slide');
-            const dots = carousel.querySelectorAll('.carousel-dot');
-            const prevBtn = carousel.querySelector('.carousel-prev');
-            const nextBtn = carousel.querySelector('.carousel-next');
-            
-            if (slides.length <= 1) {
-                prevBtn.style.display = 'none';
-                nextBtn.style.display = 'none';
-                return;
-            }
-            
-            let currentIndex = 0;
-            
-            // Function to show slide
-            function showSlide(index) {
-                slides.forEach((slide, i) => {
-                    slide.classList.toggle('active', i === index);
-                });
-                dots.forEach((dot, i) => {
-                    dot.classList.toggle('active', i === index);
-                });
-                currentIndex = index;
-            }
-            
-            // Next slide
-            nextBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                showSlide((currentIndex + 1) % slides.length);
-            });
-            
-            // Previous slide
-            prevBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                showSlide((currentIndex - 1 + slides.length) % slides.length);
-            });
-            
-            // Dot navigation
-            dots.forEach((dot, index) => {
-                dot.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    showSlide(index);
-                });
-            });
-            
-            // Auto rotate
-            let rotateInterval;
-            
-            function startRotation() {
-                rotateInterval = setInterval(() => {
-                    showSlide((currentIndex + 1) % slides.length);
-                }, 3000);
-            }
-            
-            function stopRotation() {
-                clearInterval(rotateInterval);
-            }
-            
-            // Start rotation when mouse enters
-            carousel.addEventListener('mouseenter', () => {
-                if (slides.length > 1) {
-                    startRotation();
-                }
-            });
-            
-            // Stop rotation when mouse leaves
-            carousel.addEventListener('mouseleave', () => {
-                stopRotation();
-            });
-            
-            // Start rotation initially
-            startRotation();
         }
         
         // Render pagination controls
@@ -1225,8 +996,7 @@
             const images = product.Images || [];
             
             // Generate thumbnails HTML
-           let thumbnailsHTML = '';
-        if (images.length > 0) {
+            let thumbnailsHTML = '';
             images.forEach((img, index) => {
                 const imgUrl = IMAGE_BASE_URL + encodeURIComponent(img.trim());
                 thumbnailsHTML += `
@@ -1236,9 +1006,12 @@
                          onerror="this.onerror=null; this.src='https://via.placeholder.com/80x80?text=Image'">
                 `;
             });
-        } else {
-            thumbnailsHTML = '<p>No images available</p>';
-        }
+            
+            // If no images, show placeholder
+            if (images.length === 0) {
+                thumbnailsHTML = '<p>No images available</p>';
+            }
+            
             modalProductContent.innerHTML = `
                 <div class="modal-images">
                     <div class="main-image-container">
@@ -1273,25 +1046,6 @@
                 </div>
             `;
             
-            // Add zoom functionality with click position tracking
-            const mainImage = document.getElementById('mainImage');
-            if (mainImage) {
-                mainImage.addEventListener('click', function(e) {
-                    if (this.classList.contains('zoomed')) {
-                        this.classList.remove('zoomed');
-                    } else {
-                        // Calculate click position relative to the image
-                        const rect = this.getBoundingClientRect();
-                        const x = (e.clientX - rect.left) / rect.width * 100;
-                        const y = (e.clientY - rect.top) / rect.height * 100;
-                        
-                        // Set transform origin to the click position
-                        this.style.transformOrigin = `${x}% ${y}%`;
-                        this.classList.add('zoomed');
-                    }
-                });
-            }
-            
             // Add event listeners for image navigation if there are multiple images
             if (images.length > 1) {
                 const thumbnails = modalProductContent.querySelectorAll('.thumbnail');
@@ -1310,10 +1064,6 @@
                         // Update active thumbnail
                         thumbnails.forEach(t => t.classList.remove('active'));
                         thumb.classList.add('active');
-                        
-                        // Reset zoom state
-                        mainImage.classList.remove('zoomed');
-                        mainImage.style.transformOrigin = 'center';
                     });
                 });
                 
@@ -1324,10 +1074,6 @@
                     // Update active thumbnail
                     thumbnails.forEach(t => t.classList.remove('active'));
                     thumbnails[currentImageIndex].classList.add('active');
-                    
-                    // Reset zoom state
-                    mainImage.classList.remove('zoomed');
-                    mainImage.style.transformOrigin = 'center';
                 });
                 
                 nextImageBtn.addEventListener('click', () => {
@@ -1337,10 +1083,6 @@
                     // Update active thumbnail
                     thumbnails.forEach(t => t.classList.remove('active'));
                     thumbnails[currentImageIndex].classList.add('active');
-                    
-                    // Reset zoom state
-                    mainImage.classList.remove('zoomed');
-                    mainImage.style.transformOrigin = 'center';
                 });
             }
             
