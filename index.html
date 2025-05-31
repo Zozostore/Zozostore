@@ -133,12 +133,26 @@
             background-color: #f8f8f8;
         }
 
+        .carousel-images {
+            position: relative;
+            height: 100%;
+            width: 100%;
+        }
+
         .product-image {
             height: 100%;
             width: 100%;
             object-fit: cover;
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
             transition: opacity 0.3s ease;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+        }
+
+        .product-image.active {
+            opacity: 1;
         }
 
         .product-details {
@@ -328,6 +342,13 @@
             margin-bottom: 1rem;
             background-color: #f8f8f8;
             cursor: grab;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .main-image-container.video-active {
+            background-color: #000;
         }
 
         .main-image {
@@ -339,21 +360,29 @@
             top: 0;
             left: 0;
             will-change: transform;
+            display: none;
+        }
+
+        .main-image.active {
+            display: block;
         }
 
         .video-container {
             width: 100%;
-            height: 400px;
-            background-color: #000;
+            height: 100%;
             border-radius: var(--border-radius);
             overflow: hidden;
-            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .video-container.active {
+            display: block;
         }
 
         .product-video {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
         }
 
         .thumbnails {
@@ -373,6 +402,23 @@
             border: 2px solid transparent;
             transition: var(--transition);
             background-color: #f0f0f0;
+        }
+
+        .thumbnail.video-thumbnail {
+            position: relative;
+        }
+
+        .thumbnail.video-thumbnail::after {
+            content: '\f04b';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 1.2rem;
+            text-shadow: 0 0 5px rgba(0,0,0,0.7);
         }
 
         .thumbnail:hover, .thumbnail.active {
@@ -557,6 +603,9 @@
             padding: 1.5rem;
             box-shadow: var(--box-shadow);
             transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
 
         .review-card:hover {
@@ -572,6 +621,7 @@
             font-style: italic;
             margin-bottom: 1.5rem;
             color: #555;
+            flex-grow: 1;
         }
 
         .review-author {
@@ -949,7 +999,7 @@
         
         // Set up reviews carousel
         function setupReviewsCarousel() {
-            // Sample reviews data
+            // Sample reviews data (15 reviews)
             const reviews = [
                 {
                     name: "Sarah M.",
@@ -984,6 +1034,76 @@
                     location: "Aswan, Egypt",
                     avatar: "https://randomuser.me/api/portraits/women/23.jpg",
                     content: "I've bought multiple pieces from ZOZO Store and they never disappoint. The quality is consistently excellent and the designs are timeless.",
+                    stars: 5
+                },
+                {
+                    name: "Mariam H.",
+                    location: "Sharm El Sheikh, Egypt",
+                    avatar: "https://randomuser.me/api/portraits/women/45.jpg",
+                    content: "The turquoise bracelet I ordered is even more beautiful in person. The stones have a lovely color and the craftsmanship is superb. Highly recommend!",
+                    stars: 5
+                },
+                {
+                    name: "Yasmin F.",
+                    location: "Hurghada, Egypt",
+                    avatar: "https://randomuser.me/api/portraits/women/22.jpg",
+                    content: "I was hesitant to order jewelry online, but ZOZO Store exceeded my expectations. The necklace arrived quickly and was exactly as pictured.",
+                    stars: 4
+                },
+                {
+                    name: "Nada Z.",
+                    location: "Port Said, Egypt",
+                    avatar: "https://randomuser.me/api/portraits/women/33.jpg",
+                    content: "The customer service team was incredibly helpful when I needed to adjust my order. The final product was worth the wait - absolutely gorgeous!",
+                    stars: 5
+                },
+                {
+                    name: "Hana K.",
+                    location: "Ismailia, Egypt",
+                    avatar: "https://randomuser.me/api/portraits/women/19.jpg",
+                    content: "My mother loved the earrings I got for her birthday. They have a classic design that will never go out of style. Great value for the price.",
+                    stars: 4.5
+                },
+                {
+                    name: "Sara E.",
+                    location: "Suez, Egypt",
+                    avatar: "https://randomuser.me/api/portraits/women/28.jpg",
+                    content: "I've been wearing my new ring every day since it arrived. The silver hasn't tarnished at all and the stone is securely set. Very pleased with my purchase.",
+                    stars: 5
+                },
+                {
+                    name: "Reem S.",
+                    location: "Mansoura, Egypt",
+                    avatar: "https://randomuser.me/api/portraits/women/51.jpg",
+                    content: "The bracelet fits perfectly and looks elegant with both casual and formal outfits. I've already recommended ZOZO Store to all my friends.",
+                    stars: 5
+                },
+                {
+                    name: "Dalia M.",
+                    location: "Tanta, Egypt",
+                    avatar: "https://randomuser.me/api/portraits/women/62.jpg",
+                    content: "The packaging was so elegant that I felt like I was opening a luxury gift. The jewelry inside was even more beautiful. Will be a returning customer!",
+                    stars: 5
+                },
+                {
+                    name: "Noha A.",
+                    location: "Zagazig, Egypt",
+                    avatar: "https://randomuser.me/api/portraits/women/37.jpg",
+                    content: "I appreciate that each piece is handmade - you can see the care and attention to detail. My pendant has become my favorite accessory.",
+                    stars: 4.5
+                },
+                {
+                    name: "Farida K.",
+                    location: "Assiut, Egypt",
+                    avatar: "https://randomuser.me/api/portraits/women/55.jpg",
+                    content: "The sizing was perfect and the materials feel high quality. I've received so many compliments on my new necklace. Excellent craftsmanship!",
+                    stars: 5
+                },
+                {
+                    name: "Samira R.",
+                    location: "Minya, Egypt",
+                    avatar: "https://randomuser.me/api/portraits/women/41.jpg",
+                    content: "I ordered matching sets for my bridesmaids and they were all thrilled. The pieces arrived on time and looked even better than in the photos. Thank you!",
                     stars: 5
                 }
             ];
@@ -1186,6 +1306,22 @@
                 const price = product.Price || 0;
                 const images = product.Images || [];
                 
+                // Create image elements for all images
+                let imagesHTML = '';
+                if (images.length > 0) {
+                    images.forEach((img, index) => {
+                        const imgUrl = IMAGE_BASE_URL + encodeURIComponent(img.trim());
+                        imagesHTML += `
+                            <img src="${imgUrl}" 
+                                 alt="${productName}" 
+                                 class="product-image ${index === 0 ? 'active' : ''}"
+                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/300x300?text=Image+Not+Available'">
+                        `;
+                    });
+                } else {
+                    imagesHTML = '<div class="placeholder">Image Not Available</div>';
+                }
+                
                 // Create carousel dots
                 let dotsHTML = '';
                 if (images.length > 1) {
@@ -1199,12 +1335,9 @@
                 productCard.innerHTML = `
                     <div class="product-image-container">
                         <div class="carousel-container">
-                            ${images.length > 0 ? 
-                                `<img src="${IMAGE_BASE_URL + encodeURIComponent(images[0].trim())}" 
-                                      alt="${productName}" 
-                                      class="product-image"
-                                      onerror="this.onerror=null; this.src='https://via.placeholder.com/300x300?text=Image+Not+Available'">` : 
-                                '<div class="placeholder">Image Not Available</div>'}
+                            <div class="carousel-images">
+                                ${imagesHTML}
+                            </div>
                             ${images.length > 1 ? `
                                 <div class="carousel-nav carousel-prev">
                                     <i class="fas fa-chevron-left"></i>
@@ -1237,8 +1370,8 @@
                     let currentImageIndex = 0;
                     
                     function showImage(index) {
-                        carouselImages.forEach(img => img.style.display = 'none');
-                        carouselImages[index].style.display = 'block';
+                        carouselImages.forEach(img => img.classList.remove('active'));
+                        carouselImages[index].classList.add('active');
                         
                         dots.forEach(dot => dot.classList.remove('active'));
                         dots[index].classList.add('active');
@@ -1256,8 +1389,14 @@
                         showImage(currentImageIndex);
                     });
                     
-                    // Initialize with first image
-                    showImage(0);
+                    // Add click events to dots
+                    dots.forEach((dot, index) => {
+                        dot.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            currentImageIndex = index;
+                            showImage(currentImageIndex);
+                        });
+                    });
                 }
                 
                 productCard.addEventListener('click', () => openProductModal(product));
@@ -1337,49 +1476,70 @@
             const images = product.Images || [];
             const video = product.Video || '';
             
-            // Generate thumbnails HTML
-            let thumbnailsHTML = '';
-            images.forEach((img, index) => {
-                const imgUrl = IMAGE_BASE_URL + encodeURIComponent(img.trim());
-                thumbnailsHTML += `
-                    <img src="${imgUrl}" alt="${productName} ${index}" 
-                         class="thumbnail ${index === 0 ? 'active' : ''}" 
-                         data-index="${index}"
-                         onerror="this.onerror=null; this.src='https://via.placeholder.com/80x80?text=Image'">
-                `;
-            });
-            
-            // If no images, show placeholder
-            if (images.length === 0) {
-                thumbnailsHTML = '<p>No images available</p>';
+            // Create media items array (video first, then images)
+            const mediaItems = [];
+            if (video) {
+                mediaItems.push({
+                    type: 'video',
+                    url: VIDEO_BASE_URL + encodeURIComponent(video.trim())
+                });
             }
             
-            // Video HTML if exists
-            let videoHTML = '';
-            if (video) {
-                const videoUrl = VIDEO_BASE_URL + encodeURIComponent(video.trim());
-                videoHTML = `
-                    <div class="video-container">
-                        <video class="product-video" autoplay muted loop playsinline>
-                            <source src="${videoUrl}" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
-                    </div>
-                `;
+            images.forEach(img => {
+                mediaItems.push({
+                    type: 'image',
+                    url: IMAGE_BASE_URL + encodeURIComponent(img.trim())
+                });
+            });
+            
+            // Generate thumbnails HTML
+            let thumbnailsHTML = '';
+            mediaItems.forEach((item, index) => {
+                if (item.type === 'video') {
+                    thumbnailsHTML += `
+                        <div class="thumbnail video-thumbnail ${index === 0 ? 'active' : ''}" 
+                             data-index="${index}"
+                             style="background-image: url('https://via.placeholder.com/80x80?text=Video');"></div>
+                    `;
+                } else {
+                    thumbnailsHTML += `
+                        <img src="${item.url}" alt="${productName}" 
+                             class="thumbnail ${index === 0 ? 'active' : ''}" 
+                             data-index="${index}"
+                             onerror="this.onerror=null; this.src='https://via.placeholder.com/80x80?text=Image'">
+                    `;
+                }
+            });
+            
+            // If no media, show placeholder
+            if (mediaItems.length === 0) {
+                thumbnailsHTML = '<p>No media available</p>';
             }
             
             modalProductContent.innerHTML = `
                 <div class="modal-images">
-                    ${videoHTML}
                     <div class="main-image-container" id="mainImageContainer">
-                        ${images.length > 0 ? 
-                            `<img src="${IMAGE_BASE_URL}${encodeURIComponent(images[0].trim())}" 
-                                  alt="${productName}" 
-                                  class="main-image" 
-                                  id="mainImage"
-                                  onerror="this.onerror=null; this.src='https://via.placeholder.com/400x400?text=Image+Not+Available'">` : 
-                            '<div class="placeholder">Image Not Available</div>'}
-                        ${images.length > 1 ? `
+                        ${mediaItems.map((item, index) => {
+                            if (item.type === 'video') {
+                                return `
+                                    <div class="video-container ${index === 0 ? 'active' : ''}" data-index="${index}">
+                                        <video class="product-video" autoplay muted loop playsinline>
+                                            <source src="${item.url}" type="video/mp4">
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    </div>
+                                `;
+                            } else {
+                                return `
+                                    <img src="${item.url}" 
+                                         alt="${productName}" 
+                                         class="main-image" 
+                                         data-index="${index}"
+                                         onerror="this.onerror=null; this.src='https://via.placeholder.com/400x400?text=Image+Not+Available'">
+                                `;
+                            }
+                        }).join('')}
+                        ${mediaItems.length > 1 ? `
                             <div class="image-nav prev-image" id="prevImage">
                                 <i class="fas fa-chevron-left"></i>
                             </div>
@@ -1404,24 +1564,82 @@
                 </div>
             `;
             
-            // Initialize zoom and drag state
-            let zoomLevel = 0;
-            let mainImage = document.getElementById('mainImage');
-            let mainImageContainer = document.getElementById('mainImageContainer');
-            let zoomLevelIndicator = document.getElementById('zoomLevel');
+            // Initialize media carousel
+            const mainImageContainer = document.getElementById('mainImageContainer');
+            const videoContainers = mainImageContainer.querySelectorAll('.video-container');
+            const mainImages = mainImageContainer.querySelectorAll('.main-image');
+            const thumbnails = modalProductContent.querySelectorAll('.thumbnail');
             
-            // Set up image click for zooming
-            if (mainImage) {
-                let isDragging = false;
-                let startX, startY;
-                let translateX = 0, translateY = 0;
-                let currentScale = 1;
+            let currentMediaIndex = 0;
+            
+            function showMedia(index) {
+                // Hide all media
+                videoContainers.forEach(container => {
+                    container.classList.remove('active');
+                    const video = container.querySelector('.product-video');
+                    if (video) video.pause();
+                });
                 
-                mainImage.addEventListener('click', function(e) {
-                    if (isDragging) {
-                        isDragging = false;
-                        return;
+                mainImages.forEach(img => {
+                    img.classList.remove('active');
+                });
+                
+                // Show selected media
+                if (mediaItems[index].type === 'video') {
+                    videoContainers[index].classList.add('active');
+                    const video = videoContainers[index].querySelector('.product-video');
+                    if (video) {
+                        video.play();
+                        mainImageContainer.classList.add('video-active');
                     }
+                } else {
+                    mainImages[index].classList.add('active');
+                    mainImageContainer.classList.remove('video-active');
+                }
+                
+                // Update thumbnails
+                thumbnails.forEach(thumb => thumb.classList.remove('active'));
+                thumbnails[index].classList.add('active');
+                
+                currentMediaIndex = index;
+            }
+            
+            // Show first media item
+            showMedia(0);
+            
+            // Add event listeners for thumbnails
+            thumbnails.forEach(thumb => {
+                thumb.addEventListener('click', () => {
+                    const index = parseInt(thumb.getAttribute('data-index'));
+                    showMedia(index);
+                });
+            });
+            
+            // Add navigation if multiple media items
+            if (mediaItems.length > 1) {
+                const prevImageBtn = document.getElementById('prevImage');
+                const nextImageBtn = document.getElementById('nextImage');
+                
+                prevImageBtn.addEventListener('click', () => {
+                    const newIndex = (currentMediaIndex - 1 + mediaItems.length) % mediaItems.length;
+                    showMedia(newIndex);
+                });
+                
+                nextImageBtn.addEventListener('click', () => {
+                    const newIndex = (currentMediaIndex + 1) % mediaItems.length;
+                    showMedia(newIndex);
+                });
+            }
+            
+            // Initialize zoom only for images
+            mainImages.forEach(img => {
+                // Initialize zoom and drag state
+                let zoomLevel = 0;
+                let zoomLevelIndicator = document.getElementById('zoomLevel');
+                
+                img.addEventListener('click', function(e) {
+                    // Only zoom if it's an image and not a video
+                    if (mediaItems[currentMediaIndex].type === 'video') return;
                     
                     // Get click position relative to image
                     const rect = this.getBoundingClientRect();
@@ -1438,133 +1656,32 @@
                     // Apply zoom transformation
                     switch(zoomLevel) {
                         case 0:
-                            currentScale = 1;
                             this.style.transform = 'none';
                             this.style.transformOrigin = 'center center';
                             this.style.cursor = 'zoom-in';
                             zoomLevelIndicator.textContent = 'Click image to zoom';
                             break;
                         case 1:
-                            currentScale = 2;
-                            this.style.transform = `scale(${currentScale})`;
+                            this.style.transform = `scale(2)`;
                             this.style.transformOrigin = `${originX}% ${originY}%`;
                             this.style.cursor = 'zoom-in';
                             zoomLevelIndicator.textContent = 'Zoom: 2x - Click to zoom more';
                             break;
                         case 2:
-                            currentScale = 4;
-                            this.style.transform = `scale(${currentScale})`;
+                            this.style.transform = `scale(4)`;
                             this.style.transformOrigin = `${originX}% ${originY}%`;
                             this.style.cursor = 'zoom-in';
                             zoomLevelIndicator.textContent = 'Zoom: 4x - Click to zoom more';
                             break;
                         case 3:
-                            currentScale = 8;
-                            this.style.transform = `scale(${currentScale})`;
+                            this.style.transform = `scale(8)`;
                             this.style.transformOrigin = `${originX}% ${originY}%`;
                             this.style.cursor = 'zoom-out';
                             zoomLevelIndicator.textContent = 'Zoom: 8x - Click to reset';
                             break;
                     }
-                    
-                    // Reset translation
-                    translateX = 0;
-                    translateY = 0;
-                    updateTransform();
                 });
-                
-                // Drag functionality
-                mainImage.addEventListener('mousedown', function(e) {
-                    if (zoomLevel === 0) return;
-                    
-                    isDragging = true;
-                    startX = e.clientX - translateX;
-                    startY = e.clientY - translateY;
-                    mainImageContainer.style.cursor = 'grabbing';
-                });
-                
-                document.addEventListener('mousemove', function(e) {
-                    if (!isDragging) return;
-                    
-                    translateX = e.clientX - startX;
-                    translateY = e.clientY - startY;
-                    
-                    // Limit dragging to image boundaries
-                    const maxX = (currentScale - 1) * mainImage.width / 2;
-                    const maxY = (currentScale - 1) * mainImage.height / 2;
-                    
-                    translateX = Math.max(-maxX, Math.min(maxX, translateX));
-                    translateY = Math.max(-maxY, Math.min(maxY, translateY));
-                    
-                    updateTransform();
-                });
-                
-                document.addEventListener('mouseup', function() {
-                    isDragging = false;
-                    mainImageContainer.style.cursor = 'grab';
-                });
-                
-                function updateTransform() {
-                    mainImage.style.transform = `scale(${currentScale}) translate(${translateX}px, ${translateY}px)`;
-                }
-            }
-            
-            // Add event listeners for image navigation if there are multiple images
-            if (images.length > 1) {
-                const thumbnails = modalProductContent.querySelectorAll('.thumbnail');
-                const prevImageBtn = document.getElementById('prevImage');
-                const nextImageBtn = document.getElementById('nextImage');
-                
-                let currentImageIndex = 0;
-                
-                thumbnails.forEach(thumb => {
-                    thumb.addEventListener('click', () => {
-                        const index = parseInt(thumb.getAttribute('data-index'));
-                        currentImageIndex = index;
-                        mainImage.src = IMAGE_BASE_URL + encodeURIComponent(images[index].trim());
-                        
-                        // Update active thumbnail
-                        thumbnails.forEach(t => t.classList.remove('active'));
-                        thumb.classList.add('active');
-                        
-                        // Reset zoom
-                        zoomLevel = 0;
-                        mainImage.style.transform = 'none';
-                        mainImage.style.cursor = 'zoom-in';
-                        zoomLevelIndicator.textContent = 'Click image to zoom';
-                    });
-                });
-                
-                prevImageBtn.addEventListener('click', () => {
-                    currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
-                    mainImage.src = IMAGE_BASE_URL + encodeURIComponent(images[currentImageIndex].trim());
-                    
-                    // Update active thumbnail
-                    thumbnails.forEach(t => t.classList.remove('active'));
-                    thumbnails[currentImageIndex].classList.add('active');
-                    
-                    // Reset zoom
-                    zoomLevel = 0;
-                    mainImage.style.transform = 'none';
-                    mainImage.style.cursor = 'zoom-in';
-                    zoomLevelIndicator.textContent = 'Click image to zoom';
-                });
-                
-                nextImageBtn.addEventListener('click', () => {
-                    currentImageIndex = (currentImageIndex + 1) % images.length;
-                    mainImage.src = IMAGE_BASE_URL + encodeURIComponent(images[currentImageIndex].trim());
-                    
-                    // Update active thumbnail
-                    thumbnails.forEach(t => t.classList.remove('active'));
-                    thumbnails[currentImageIndex].classList.add('active');
-                    
-                    // Reset zoom
-                    zoomLevel = 0;
-                    mainImage.style.transform = 'none';
-                    mainImage.style.cursor = 'zoom-in';
-                    zoomLevelIndicator.textContent = 'Click image to zoom';
-                });
-            }
+            });
             
             // Back button functionality
             const backBtn = document.getElementById('backToProducts');
