@@ -889,7 +889,7 @@
                 productCard.className = 'product-card';
                 productCard.innerHTML = `
                     <div class="product-image-container">
-                        <img src="${mainImageUrl}" alt="${productName}" class="product-image" onerror="this.src='https://via.placeholder.com/300x300?text=Image+Not+Available'">
+                        <img src="${mainImageUrl}" alt="${productName}" class="product-image">
                         <span class="product-category">${category}</span>
                     </div>
                     <div class="product-details">
@@ -978,9 +978,8 @@
             // Generate thumbnails HTML
             let thumbnailsHTML = '';
             images.forEach((img, index) => {
-                const imgUrl = IMAGE_BASE_URL + img;
                 thumbnailsHTML += `
-                    <img src="${imgUrl}" alt="${productName} ${index}" class="thumbnail ${index === 0 ? 'active' : ''}" data-index="${index}" onerror="this.src='https://via.placeholder.com/80x80?text=Image+Not+Available'">
+                    <img src="${IMAGE_BASE_URL}${img}" alt="${productName} ${index}" class="thumbnail ${index === 0 ? 'active' : ''}" data-index="${index}">
                 `;
             });
             
@@ -993,7 +992,7 @@
                 <div class="modal-images">
                     <div class="main-image-container">
                         ${images.length > 0 ? 
-                            `<img src="${IMAGE_BASE_URL}${images[0]}" alt="${productName}" class="main-image" id="mainImage" onerror="this.src='https://via.placeholder.com/400x400?text=Image+Not+Available'">` : 
+                            `<img src="${IMAGE_BASE_URL}${images[0]}" alt="${productName}" class="main-image" id="mainImage">` : 
                             '<div class="placeholder">Image Not Available</div>'}
                         ${images.length > 1 ? `
                             <div class="image-nav prev-image" id="prevImage">
