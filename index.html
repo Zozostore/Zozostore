@@ -1,22 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menna Silver منة - Handmade Women Accessories</title>
+    <title>Menna Silver - Handmade Women Accessories</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&family=El+Messiri:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #d4af7a;
-            --secondary-color: #7a5c44;
-            --accent-color: #b88e5d;
-            --light-bg: #f9f6f2;
-            --dark-text: #3a2e1f;
+            --primary-color: #c5a47e;
+            --secondary-color: #1a2a3a;
+            --accent-color: #e8c8a0;
+            --light-bg: #f9f7f4;
+            --dark-text: #1a2a3a;
             --light-text: #fff;
             --border-radius: 8px;
             --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
+            --gold-gradient: linear-gradient(135deg, #c5a47e 0%, #e8c8a0 100%);
         }
 
         * {
@@ -30,11 +31,17 @@
             background-color: var(--light-bg);
             color: var(--dark-text);
             line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Arabic Font */
+        .arabic {
+            font-family: 'El Messiri', sans-serif;
         }
 
         /* Header Styles */
         header {
-            background: linear-gradient(135deg, #d4af7a 0%, #7a5c44 100%);
+            background: linear-gradient(135deg, #1a2a3a 0%, #0d1720 100%);
             padding: 2rem 1rem;
             text-align: center;
             box-shadow: var(--box-shadow);
@@ -49,14 +56,41 @@
             z-index: 2;
         }
 
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
         .logo {
             font-family: 'Playfair Display', serif;
             font-size: 3.5rem;
             font-weight: 700;
-            color: var(--light-text);
+            color: var(--accent-color);
             letter-spacing: 2px;
-            margin-bottom: 1rem;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .logo::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 3px;
+            background: var(--accent-color);
+        }
+
+        .arabic-logo {
+            font-family: 'El Messiri', sans-serif;
+            font-size: 2.8rem;
+            color: var(--light-text);
+            margin-top: 0.5rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
         }
 
         .tagline {
@@ -66,6 +100,77 @@
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
+            opacity: 0.9;
+        }
+
+        /* Search and Filters Container */
+        .controls-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-container {
+            position: relative;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 0.8rem 1.5rem 0.8rem 3rem;
+            border-radius: 50px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .search-container input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .search-container i {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .sort-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .sort-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+        }
+
+        .sort-select {
+            padding: 0.7rem 1.5rem;
+            border-radius: 50px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .sort-select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .sort-select option {
+            background: var(--secondary-color);
         }
 
         /* Filter Buttons */
@@ -79,8 +184,8 @@
 
         .filter-btn {
             background: transparent;
-            border: 2px solid var(--light-text);
-            color: var(--light-text);
+            border: 2px solid var(--accent-color);
+            color: var(--accent-color);
             padding: 0.8rem 2rem;
             font-size: 1.1rem;
             font-weight: 600;
@@ -89,11 +194,29 @@
             transition: var(--transition);
             text-transform: uppercase;
             letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .filter-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 100%;
+            background: var(--accent-color);
+            transition: var(--transition);
+            z-index: -1;
         }
 
         .filter-btn:hover, .filter-btn.active {
-            background: var(--light-text);
             color: var(--secondary-color);
+        }
+
+        .filter-btn:hover::before, .filter-btn.active::before {
+            width: 100%;
         }
 
         /* Main Content */
@@ -107,7 +230,7 @@
         .products-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 2rem;
+            gap: 2.5rem;
             margin-bottom: 3rem;
         }
 
@@ -119,18 +242,19 @@
             transition: var(--transition);
             position: relative;
             cursor: pointer;
+            transform-style: preserve-3d;
         }
 
         .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            transform: translateY(-10px) rotateY(5deg);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
         }
 
         .product-image-container {
             position: relative;
-            height: 250px;
+            height: 280px;
             overflow: hidden;
-            background-color: #f8f8f8;
+            background: linear-gradient(135deg, #f8f5f0 0%, #f0ece5 100%);
         }
 
         .carousel-images {
@@ -143,7 +267,7 @@
             height: 100%;
             width: 100%;
             object-fit: cover;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
             transition: opacity 0.3s ease;
             position: absolute;
             top: 0;
@@ -164,6 +288,9 @@
             font-weight: 600;
             margin-bottom: 0.5rem;
             color: var(--secondary-color);
+            min-height: 3.5rem;
+            display: flex;
+            align-items: center;
         }
 
         .product-description {
@@ -178,20 +305,25 @@
             font-weight: 700;
             color: var(--primary-color);
             text-align: right;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 0.5rem;
         }
 
         .product-category {
             position: absolute;
             top: 15px;
             right: 15px;
-            background: var(--primary-color);
+            background: var(--secondary-color);
             color: white;
-            padding: 0.3rem 0.8rem;
+            padding: 0.3rem 1rem;
             border-radius: 30px;
             font-size: 0.8rem;
             font-weight: 600;
             text-transform: uppercase;
             z-index: 10;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
 
         /* Product Image Carousel */
@@ -205,7 +337,7 @@
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(26, 42, 58, 0.8);
             color: white;
             width: 32px;
             height: 32px;
@@ -320,6 +452,13 @@
             cursor: pointer;
             transition: var(--transition);
             z-index: 1001;
+            background: rgba(255, 255, 255, 0.8);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .close-modal:hover {
@@ -354,6 +493,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .main-image-container.video-active {
@@ -485,7 +625,7 @@
 
         .modal-category {
             display: inline-block;
-            background: var(--primary-color);
+            background: var(--secondary-color);
             color: white;
             padding: 0.3rem 1rem;
             border-radius: 30px;
@@ -499,6 +639,7 @@
             color: #555;
             line-height: 1.8;
             margin-bottom: 1.5rem;
+            font-size: 1.05rem;
         }
 
         .modal-price {
@@ -524,7 +665,7 @@
         }
 
         .back-btn:hover {
-            background: #5c4735;
+            background: #0d1720;
         }
 
         /* Loading Indicator */
@@ -683,7 +824,7 @@
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(197, 164, 126, 0.8);
             color: white;
             width: 40px;
             height: 40px;
@@ -731,7 +872,7 @@
 
         /* Footer */
         footer {
-            background: linear-gradient(to right, #7a5c44, #5c4735);
+            background: linear-gradient(to right, #1a2a3a, #0d1720);
             color: var(--light-text);
             padding: 3rem 1rem;
             text-align: center;
@@ -752,29 +893,50 @@
             display: flex;
             gap: 1.5rem;
             justify-content: center;
+            flex-wrap: wrap;
         }
 
         .footer-links a {
-            color: var(--light-text);
+            color: var(--accent-color);
             text-decoration: none;
             transition: var(--transition);
             font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .footer-links a:hover {
-            color: var(--primary-color);
+            color: white;
         }
 
         .copyright {
             margin-top: 1.5rem;
             font-size: 0.9rem;
             opacity: 0.8;
+            color: rgba(255, 255, 255, 0.7);
         }
 
         /* Responsive Design */
+        @media (max-width: 992px) {
+            .controls-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .sort-container {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
         @media (max-width: 768px) {
             .logo {
                 font-size: 2.5rem;
+            }
+            
+            .arabic-logo {
+                font-size: 2.2rem;
             }
             
             .filter-btn {
@@ -839,6 +1001,14 @@
             .main-image-container {
                 height: 40%;
             }
+            
+            .logo {
+                font-size: 2.2rem;
+            }
+            
+            .arabic-logo {
+                font-size: 1.8rem;
+            }
         }
         
         /* Zoom indicators */
@@ -871,14 +1041,71 @@
         .main-image {
             cursor: zoom-in;
         }
+        
+        /* Decorative Elements */
+        .decorative-pattern {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            opacity: 0.03;
+            z-index: 0;
+        }
+        
+        .pattern-1 {
+            top: 20%;
+            left: 5%;
+            background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
+        }
+        
+        .pattern-2 {
+            bottom: 10%;
+            right: 5%;
+            background: radial-gradient(circle, var(--secondary-color) 0%, transparent 70%);
+        }
+        
+        /* No products message */
+        .no-products {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 3rem;
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
     </style>
 </head>
 <body>
+    <!-- Decorative Background Elements -->
+    <div class="decorative-pattern pattern-1"></div>
+    <div class="decorative-pattern pattern-2"></div>
+    
     <!-- Header Section -->
     <header>
         <div class="header-content">
-            <h1 class="logo">Menna Silver منة</h1>
+            <div class="logo-container">
+                <h1 class="logo">Menna Silver</h1>
+                <div class="arabic-logo">منة</div>
+            </div>
             <p class="tagline">Exquisite Handmade Accessories Crafted with Passion and Precision</p>
+            
+            <!-- Search and Sort Controls -->
+            <div class="controls-container">
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search products...">
+                </div>
+                <div class="sort-container">
+                    <span class="sort-label">Sort by:</span>
+                    <select class="sort-select" id="sortSelect">
+                        <option value="default">Default</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                    </select>
+                </div>
+            </div>
+            
             <div class="filters">
                 <button class="filter-btn active" data-category="all">All Products</button>
                 <button class="filter-btn" data-category="Rings">Rings</button>
@@ -935,7 +1162,7 @@
                 <li><a href="#"><i class="fas fa-envelope"></i> Email</a></li>
             </ul>
             <div class="copyright">
-                <p>&copy; 2023 Menna Silver منة. All Rights Reserved. Handmade with Love in Egypt.</p>
+                <p>&copy; 2023 Menna Silver. All Rights Reserved. Handmade with Love in Egypt.</p>
             </div>
         </div>
     </footer>
@@ -967,12 +1194,16 @@
         const reviewDots = document.getElementById('reviewDots');
         const reviewPrev = document.getElementById('reviewPrev');
         const reviewNext = document.getElementById('reviewNext');
+        const searchInput = document.getElementById('searchInput');
+        const sortSelect = document.getElementById('sortSelect');
         
         // Product data storage
         let allProducts = [];
         let filteredProducts = [];
         let currentPage = 1;
         let currentCategory = 'all';
+        let searchTerm = '';
+        let sortValue = 'default';
         
         // Reviews state
         let currentReviewSlide = 0;
@@ -996,20 +1227,20 @@
                     button.classList.add('active');
                     
                     currentCategory = button.getAttribute('data-category');
-                    currentPage = 1;
-                    
-                    // Filter products
-                    if (currentCategory === 'all') {
-                        filteredProducts = [...allProducts];
-                    } else {
-                        filteredProducts = allProducts.filter(product => 
-                            product.Category === currentCategory
-                        );
-                    }
-                    
-                    renderProducts();
-                    renderPagination();
+                    filterProducts();
                 });
+            });
+            
+            // Search input event listener
+            searchInput.addEventListener('input', function() {
+                searchTerm = this.value.toLowerCase();
+                filterProducts();
+            });
+            
+            // Sort select event listener
+            sortSelect.addEventListener('change', function() {
+                sortValue = this.value;
+                filterProducts();
             });
             
             // Close modal functionality
@@ -1024,6 +1255,44 @@
                 }
             });
         });
+        
+        // Filter and sort products
+        function filterProducts() {
+            // Start with all products
+            let tempProducts = [...allProducts];
+            
+            // Apply category filter
+            if (currentCategory !== 'all') {
+                tempProducts = tempProducts.filter(product => 
+                    product.Category === currentCategory
+                );
+            }
+            
+            // Apply search filter
+            if (searchTerm) {
+                tempProducts = tempProducts.filter(product => {
+                    const productName = product['Product Name'] || '';
+                    const description = product.Description || '';
+                    return (
+                        productName.toLowerCase().includes(searchTerm) ||
+                        description.toLowerCase().includes(searchTerm)
+                    );
+                });
+            }
+            
+            // Apply sorting
+            if (sortValue === 'price-low') {
+                tempProducts.sort((a, b) => a.Price - b.Price);
+            } else if (sortValue === 'price-high') {
+                tempProducts.sort((a, b) => b.Price - a.Price);
+            }
+            
+            filteredProducts = tempProducts;
+            currentPage = 1;
+            
+            renderProducts();
+            renderPagination();
+        }
         
         // Set up reviews carousel
         function setupReviewsCarousel() {
@@ -1047,7 +1316,7 @@
                     name: "Layla K.",
                     location: "Luxor, Egypt",
                     avatar: "https://randomuser.me/api/portraits/women/68.jpg",
-                    content: "My sapphire ring arrived exactly as pictured. The attention to detail is remarkable and it fits perfectly. Menna Silver منة is now my go-to for special jewelry pieces.",
+                    content: "My sapphire ring arrived exactly as pictured. The attention to detail is remarkable and it fits perfectly. Menna Silver is now my go-to for special jewelry pieces.",
                     stars: 5
                 },
                 {
@@ -1061,7 +1330,7 @@
                     name: "Amina S.",
                     location: "Aswan, Egypt",
                     avatar: "https://randomuser.me/api/portraits/women/23.jpg",
-                    content: "I've bought multiple pieces from Menna Silver منة and they never disappoint. The quality is consistently excellent and the designs are timeless.",
+                    content: "I've bought multiple pieces from Menna Silver and they never disappoint. The quality is consistently excellent and the designs are timeless.",
                     stars: 5
                 },
                 {
@@ -1075,7 +1344,7 @@
                     name: "Yasmin F.",
                     location: "Hurghada, Egypt",
                     avatar: "https://randomuser.me/api/portraits/women/22.jpg",
-                    content: "I was hesitant to order jewelry online, but Menna Silver منة exceeded my expectations. The necklace arrived quickly and was exactly as pictured.",
+                    content: "I was hesitant to order jewelry online, but Menna Silver exceeded my expectations. The necklace arrived quickly and was exactly as pictured.",
                     stars: 4
                 },
                 {
@@ -1103,7 +1372,7 @@
                     name: "Reem S.",
                     location: "Mansoura, Egypt",
                     avatar: "https://randomuser.me/api/portraits/women/51.jpg",
-                    content: "The bracelet fits perfectly and looks elegant with both casual and formal outfits. I've already recommended Menna Silver منة to all my friends.",
+                    content: "The bracelet fits perfectly and looks elegant with both casual and formal outfits. I've already recommended Menna Silver to all my friends.",
                     stars: 5
                 },
                 {
@@ -1330,7 +1599,7 @@
         // Render products to the grid with carousels
         function renderProducts() {
             if (filteredProducts.length === 0) {
-                productsContainer.innerHTML = '<p class="no-products">No products found matching your criteria.</p>';
+                productsContainer.innerHTML = '<div class="no-products"><p>No products found matching your criteria.</p><button class="reload-btn" onclick="resetFilters()">Reset Filters</button></div>';
                 return;
             }
             
@@ -1444,6 +1713,26 @@
                 productCard.addEventListener('click', () => openProductModal(product));
                 productsContainer.appendChild(productCard);
             });
+        }
+        
+        // Reset filters
+        function resetFilters() {
+            searchInput.value = '';
+            sortSelect.value = 'default';
+            searchTerm = '';
+            sortValue = 'default';
+            
+            // Reset category buttons
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-category') === 'all') {
+                    btn.classList.add('active');
+                }
+            });
+            
+            currentCategory = 'all';
+            filterProducts();
         }
         
         // Render pagination controls
