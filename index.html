@@ -942,77 +942,49 @@
             }
         }
         
-        // FIXED: Generate image array based on base name
-        function generateImageArray(baseName) {
-            if (!baseName) return [];
-            
-            // Remove file extension if present
-            const base = baseName.split('.')[0];
-            
-            // Create array with base name and numbered variations (0-9)
-            const images = [];
-            
-            // Add base name without numbers
-            images.push(`${base}.jpg`);
-            images.push(`${base}.jpeg`);
-            images.push(`${base}.png`);
-            images.push(`${base}.webp`);
-            
-            // Add numbered variations (0-9)
+            // FIXED: Generate image array by checking which images actually exist
+    function generateImageArray(baseName) {
+        if (!baseName) return [];
+        
+        // Remove file extension if present
+        const base = baseName.split('.')[0];
+        const extensions = ['.jpg', '.jpeg', '.png', '.webp'];
+        const images = [];
+        
+        // Create a function to check if image exists
+        function checkImageExists(url, callback) {
+            const img = new Image();
+            img.onload = function() { callback(true); };
+            img.onerror = function() { callback(false); };
+            img.src = url;
+        }
+        
+        // Check base name without numbers first
+        for (const ext of extensions) {
+            const imgUrl = IMAGE_BASE_URL + base + ext;
+            checkImageExists(imgUrl, function(exists) {
+                if (exists) {
+                    images.push(base + ext);
+                }
+            });
+        }
+        
+        // Check numbered variations (0-9) if base image not found
+        if (images.length === 0) {
             for (let i = 0; i <= 9; i++) {
-                images.push(`${base}${i}.jpg`);
-                images.push(`${base}${i}.jpeg`);
-                images.push(`${base}${i}.png`);
-                images.push(`${base}${i}.webp`);
+                for (const ext of extensions) {
+                    const imgUrl = IMAGE_BASE_URL + base + i + ext;
+                    checkImageExists(imgUrl, function(exists) {
+                        if (exists) {
+                            images.push(base + i + ext);
+                        }
+                    });
+                }
             }
-            
-            return images;
         }
         
-        // Improved CSV parsing
-        function parseCSV(csv) {
-            const lines = csv.split('\n');
-            const headers = lines[0].split(',').map(h => h.trim());
-            
-            const products = [];
-            
-            for (let i = 1; i < lines.length; i++) {
-                const line = lines[i].trim();
-                if (!line) continue;
-                
-                // Split while preserving quoted commas
-                const values = [];
-                let current = '';
-                let inQuotes = false;
-                
-                for (let j = 0; j < line.length; j++) {
-                    const char = line[j];
-                    
-                    if (char === '"') {
-                        inQuotes = !inQuotes;
-                    } else if (char === ',' && !inQuotes) {
-                        values.push(current.trim());
-                        current = '';
-                    } else {
-                        current += char;
-                    }
-                }
-                values.push(current.trim()); // Push last value
-                
-                // Skip if not enough values
-                if (values.length < headers.length) continue;
-                
-                const product = {};
-                for (let j = 0; j < headers.length; j++) {
-                    product[headers[j]] = values[j] || '';
-                }
-                
-                products.push(product);
-            }
-            
-            return products;
-        }
-        
+        return images;
+    }
         // Render products to the grid
         function renderProducts() {
             if (filteredProducts.length === 0) {
@@ -1040,20 +1012,24 @@
                     'https://via.placeholder.com/300x300?text=Image+Not+Available';
                 
                 const productCard = document.createElement('div');
-                productCard.className = 'product-card';
-                productCard.innerHTML = `
-                    <div class="product-image-container">
-                        <div class="product-carousel">
-                            <div class="carousel-inner">
-                                ${images.map((img, index) => `
-                                    <div class="carousel-slide ${index === 0 ? 'active' : ''}">
-                                        <img src="${IMAGE_BASE_URL}${encodeURIComponent(img.trim())}" 
-                                             alt="${productName}" 
-                                             class="product-image"
-                                             onerror="this.onerror=null; this.src='https://via.placeholder.com/300x300?text=Image+Not+Available'">
-                                    </div>
-                                `).join('')}
-                            </div>
+            productCard.className = 'product-card';
+            
+            // Only create carousel if images exist
+            let carouselHTML = '';
+            if (images.length > 0) {
+                carouselHTML = `
+                    <div class="product-carousel">
+                        <div class="carousel-inner">
+                            ${images.map((img, index) => `
+                                <div class="carousel-slide ${index === 0 ? 'active' : ''}">
+                                    <img src="${IMAGE_BASE_URL}${encodeURIComponent(img.trim())}" 
+                                         alt="${productName}" 
+                                         class="product-image"
+                                         onerror="this.onerror=null; this.src='https://via.placeholder.com/300x300?text=Image+Not+Available'">
+                                </div>
+                            `).join('')}
+                        </div>
+                        ${images.length > 1 ? `
                             <div class="carousel-nav carousel-prev">
                                 <i class="fas fa-chevron-left"></i>
                             </div>
@@ -1065,17 +1041,31 @@
                                     <div class="carousel-dot ${index === 0 ? 'active' : ''}" data-index="${index}"></div>
                                 `).join('')}
                             </div>
-                        </div>
-                        <span class="product-category">${category}</span>
-                    </div>
-                    <div class="product-details">
-                        <h3 class="product-title">${productName}</h3>
-                        <p class="product-description">${description.substring(0, 80)}${description.length > 80 ? '...' : ''}</p>
-                        <div class="product-price">EGP ${price.toFixed(2)}</div>
+                        ` : ''}
                     </div>
                 `;
-                
-                // Add click event to open modal
+            } else {
+                carouselHTML = `
+                    <div class="product-image-container" style="display: flex; align-items: center; justify-content: center;">
+                        <div style="text-align: center; padding: 1rem;">
+                            <i class="fas fa-image" style="font-size: 3rem; color: #ddd;"></i>
+                            <p>No images available</p>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            productCard.innerHTML = `
+                <div class="product-image-container">
+                    ${carouselHTML}
+                    <span class="product-category">${category}</span>
+                </div>
+                <div class="product-details">
+                    <h3 class="product-title">${productName}</h3>
+                    <p class="product-description">${description.substring(0, 80)}${description.length > 80 ? '...' : ''}</p>
+                    <div class="product-price">EGP ${price.toFixed(2)}</div>
+                </div>
+            `;
                 productCard.addEventListener('click', () => openProductModal(product));
                 
                 // Add carousel functionality
@@ -1235,7 +1225,8 @@
             const images = product.Images || [];
             
             // Generate thumbnails HTML
-            let thumbnailsHTML = '';
+           let thumbnailsHTML = '';
+        if (images.length > 0) {
             images.forEach((img, index) => {
                 const imgUrl = IMAGE_BASE_URL + encodeURIComponent(img.trim());
                 thumbnailsHTML += `
@@ -1245,12 +1236,9 @@
                          onerror="this.onerror=null; this.src='https://via.placeholder.com/80x80?text=Image'">
                 `;
             });
-            
-            // If no images, show placeholder
-            if (images.length === 0) {
-                thumbnailsHTML = '<p>No images available</p>';
-            }
-            
+        } else {
+            thumbnailsHTML = '<p>No images available</p>';
+        }
             modalProductContent.innerHTML = `
                 <div class="modal-images">
                     <div class="main-image-container">
