@@ -382,7 +382,7 @@
         }
 
         .main-image.zoomed {
-            transform: scale(1.5);
+            transform: scale(2);
             cursor: zoom-out;
         }
 
@@ -832,7 +832,7 @@
     </div>
 
     <script>
-        // Configuration
+        // Configuration - FIXED IMAGE BASE URL
         const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTaVeQmp8Br-s5uHaNjo2EFdkcR6s0kgQS61MrvLBXMthgMWjiAAlVhPt7Y8XABev4DGd9kl7EVKC24/pub?output=csv';
         const IMAGE_BASE_URL = 'https://raw.githubusercontent.com/Zozostore/Zozostore/main/';
         const PRODUCTS_PER_PAGE = 25;
@@ -916,7 +916,7 @@
                 // Process the data
                 allProducts.forEach(product => {
                     // Get the image base name
-                    const imageBase = product['Image Base'] || '';
+                    const imageBase = product['Images'] || '';
                     
                     // Generate image URLs based on base name
                     product.Images = generateImageArray(imageBase);
@@ -942,26 +942,28 @@
             }
         }
         
-        // Generate image array based on base name
+        // FIXED: Generate image array based on base name
         function generateImageArray(baseName) {
             if (!baseName) return [];
             
             // Remove file extension if present
             const base = baseName.split('.')[0];
             
-            const formats = ['jpg', 'jpeg', 'png', 'webp'];
+            // Create array with base name and numbered variations (0-9)
             const images = [];
             
-            // Main image without number
-            for (const format of formats) {
-                images.push(`${base}.${format}`);
-            }
+            // Add base name without numbers
+            images.push(`${base}.jpg`);
+            images.push(`${base}.jpeg`);
+            images.push(`${base}.png`);
+            images.push(`${base}.webp`);
             
-            // Numbered images (0-20) to match your GitHub files
-            for (let i = 0; i <= 20; i++) {
-                for (const format of formats) {
-                    images.push(`${base}${i}.${format}`);
-                }
+            // Add numbered variations (0-9)
+            for (let i = 0; i <= 9; i++) {
+                images.push(`${base}${i}.jpg`);
+                images.push(`${base}${i}.jpeg`);
+                images.push(`${base}${i}.png`);
+                images.push(`${base}${i}.webp`);
             }
             
             return images;
