@@ -131,9 +131,6 @@
             height: 250px;
             overflow: hidden;
             background-color: #f8f8f8;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .product-image {
@@ -181,6 +178,67 @@
             font-weight: 600;
             text-transform: uppercase;
             z-index: 10;
+        }
+
+        /* Product Image Carousel */
+        .carousel-container {
+            position: relative;
+            height: 100%;
+            width: 100%;
+        }
+
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.4);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            z-index: 10;
+            opacity: 0;
+        }
+
+        .product-card:hover .carousel-nav {
+            opacity: 1;
+        }
+
+        .carousel-prev {
+            left: 10px;
+        }
+
+        .carousel-next {
+            right: 10px;
+        }
+
+        .carousel-dots {
+            position: absolute;
+            bottom: 15px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            z-index: 10;
+        }
+
+        .carousel-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transition: var(--transition);
+        }
+
+        .carousel-dot.active {
+            background: var(--primary-color);
+            transform: scale(1.2);
         }
 
         /* Pagination */
@@ -259,6 +317,7 @@
         .modal-images {
             flex: 1;
             min-width: 300px;
+            position: relative;
         }
 
         .main-image-container {
@@ -268,15 +327,33 @@
             border-radius: var(--border-radius);
             margin-bottom: 1rem;
             background-color: #f8f8f8;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            cursor: grab;
         }
 
         .main-image {
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
+            transition: transform 0.3s ease;
+            position: absolute;
+            top: 0;
+            left: 0;
+            will-change: transform;
+        }
+
+        .video-container {
+            width: 100%;
+            height: 400px;
+            background-color: #000;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .product-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .thumbnails {
@@ -284,6 +361,7 @@
             gap: 0.5rem;
             overflow-x: auto;
             padding-bottom: 0.5rem;
+            justify-content: center;
         }
 
         .thumbnail {
@@ -445,6 +523,7 @@
         /* Customer Reviews */
         .reviews-section {
             margin: 4rem 0;
+            position: relative;
         }
 
         .section-title {
@@ -469,6 +548,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
+            position: relative;
         }
 
         .review-card {
@@ -515,6 +595,71 @@
         .author-info p {
             font-size: 0.9rem;
             color: #777;
+        }
+
+        /* Reviews Carousel */
+        .reviews-carousel {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reviews-slides {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+
+        .reviews-slide {
+            min-width: 100%;
+        }
+
+        .review-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.4);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            z-index: 10;
+        }
+
+        .review-nav.prev {
+            left: -20px;
+        }
+
+        .review-nav.next {
+            right: -20px;
+        }
+
+        .review-nav:hover {
+            background: var(--primary-color);
+        }
+
+        .review-dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .review-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ccc;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .review-dot.active {
+            background: var(--primary-color);
+            transform: scale(1.2);
         }
 
         /* Footer */
@@ -577,6 +722,20 @@
             .modal-product-content {
                 flex-direction: column;
             }
+            
+            .review-nav {
+                width: 30px;
+                height: 30px;
+                font-size: 0.8rem;
+            }
+            
+            .review-nav.prev {
+                left: -10px;
+            }
+            
+            .review-nav.next {
+                right: -10px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -603,6 +762,36 @@
             .filter-btn {
                 padding: 0.5rem 1rem;
             }
+            
+            .video-container {
+                height: 300px;
+            }
+        }
+        
+        /* Zoom indicators */
+        .zoom-indicator {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            z-index: 10;
+            display: none;
+        }
+        
+        .zoom-level {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            z-index: 10;
         }
     </style>
 </head>
@@ -639,57 +828,18 @@
         <!-- Customer Reviews -->
         <div class="reviews-section">
             <h2 class="section-title">Customer Reviews</h2>
-            <div class="reviews-container">
-                <div class="review-card">
-                    <div class="stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <p class="review-content">The craftsmanship of my necklace exceeded all expectations. It arrived beautifully packaged and I've received countless compliments. Will definitely be purchasing again!</p>
-                    <div class="review-author">
-                        <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="Sarah M." class="author-avatar">
-                        <div class="author-info">
-                            <h4>Sarah M.</h4>
-                            <p>Cairo, Egypt</p>
-                        </div>
-                    </div>
+            <div class="reviews-carousel">
+                <div class="review-nav prev" id="reviewPrev">
+                    <i class="fas fa-chevron-left"></i>
                 </div>
-                <div class="review-card">
-                    <div class="stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star-half-alt"></i>
-                    </div>
-                    <p class="review-content">I ordered the gold bangle set as a gift for my sister's wedding. The pieces are stunning and the quality is exceptional. Customer service was also very helpful.</p>
-                    <div class="review-author">
-                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Nour A." class="author-avatar">
-                        <div class="author-info">
-                            <h4>Nour A.</h4>
-                            <p>Alexandria, Egypt</p>
-                        </div>
-                    </div>
+                <div class="review-nav next" id="reviewNext">
+                    <i class="fas fa-chevron-right"></i>
                 </div>
-                <div class="review-card">
-                    <div class="stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <p class="review-content">My sapphire ring arrived exactly as pictured. The attention to detail is remarkable and it fits perfectly. ZOZO Store is now my go-to for special jewelry pieces.</p>
-                    <div class="review-author">
-                        <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Layla K." class="author-avatar">
-                        <div class="author-info">
-                            <h4>Layla K.</h4>
-                            <p>Luxor, Egypt</p>
-                        </div>
-                    </div>
+                <div class="reviews-slides" id="reviewsSlides">
+                    <!-- Review slides will be inserted here -->
+                </div>
+                <div class="review-dots" id="reviewDots">
+                    <!-- Dots will be inserted here -->
                 </div>
             </div>
         </div>
@@ -726,6 +876,7 @@
         // Configuration
         const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTaVeQmp8Br-s5uHaNjo2EFdkcR6s0kgQS61MrvLBXMthgMWjiAAlVhPt7Y8XABev4DGd9kl7EVKC24/pub?output=csv';
         const IMAGE_BASE_URL = 'https://raw.githubusercontent.com/Zozostore/Zozostore/main/';
+        const VIDEO_BASE_URL = 'https://raw.githubusercontent.com/Zozostore/Zozostore/main/';
         const PRODUCTS_PER_PAGE = 25;
         
         // DOM elements
@@ -734,6 +885,10 @@
         const productModal = document.getElementById('productModal');
         const modalProductContent = document.getElementById('modalProductContent');
         const closeModal = document.getElementById('closeModal');
+        const reviewsSlides = document.getElementById('reviewsSlides');
+        const reviewDots = document.getElementById('reviewDots');
+        const reviewPrev = document.getElementById('reviewPrev');
+        const reviewNext = document.getElementById('reviewNext');
         
         // Product data storage
         let allProducts = [];
@@ -741,10 +896,16 @@
         let currentPage = 1;
         let currentCategory = 'all';
         
+        // Reviews state
+        let currentReviewSlide = 0;
+        
         // Initialize the page
         document.addEventListener('DOMContentLoaded', function() {
             // Fetch products from Google Sheet
             fetchProducts();
+            
+            // Set up reviews carousel
+            setupReviewsCarousel();
             
             // Product filtering functionality
             const filterButtons = document.querySelectorAll('.filter-btn');
@@ -786,6 +947,129 @@
             });
         });
         
+        // Set up reviews carousel
+        function setupReviewsCarousel() {
+            // Sample reviews data
+            const reviews = [
+                {
+                    name: "Sarah M.",
+                    location: "Cairo, Egypt",
+                    avatar: "https://randomuser.me/api/portraits/women/32.jpg",
+                    content: "The craftsmanship of my necklace exceeded all expectations. It arrived beautifully packaged and I've received countless compliments. Will definitely be purchasing again!",
+                    stars: 5
+                },
+                {
+                    name: "Nour A.",
+                    location: "Alexandria, Egypt",
+                    avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+                    content: "I ordered the gold bangle set as a gift for my sister's wedding. The pieces are stunning and the quality is exceptional. Customer service was also very helpful.",
+                    stars: 4.5
+                },
+                {
+                    name: "Layla K.",
+                    location: "Luxor, Egypt",
+                    avatar: "https://randomuser.me/api/portraits/women/68.jpg",
+                    content: "My sapphire ring arrived exactly as pictured. The attention to detail is remarkable and it fits perfectly. ZOZO Store is now my go-to for special jewelry pieces.",
+                    stars: 5
+                },
+                {
+                    name: "Fatima R.",
+                    location: "Giza, Egypt",
+                    avatar: "https://randomuser.me/api/portraits/women/12.jpg",
+                    content: "The earrings I purchased are absolutely stunning. They're lightweight yet durable, and the design is unique. Shipping was faster than expected!",
+                    stars: 4
+                },
+                {
+                    name: "Amina S.",
+                    location: "Aswan, Egypt",
+                    avatar: "https://randomuser.me/api/portraits/women/23.jpg",
+                    content: "I've bought multiple pieces from ZOZO Store and they never disappoint. The quality is consistently excellent and the designs are timeless.",
+                    stars: 5
+                }
+            ];
+            
+            // Create review slides
+            reviewsSlides.innerHTML = '';
+            reviewDots.innerHTML = '';
+            
+            // Group reviews into slides (3 per slide)
+            for (let i = 0; i < reviews.length; i += 3) {
+                const slide = document.createElement('div');
+                slide.className = 'reviews-slide';
+                
+                const slideReviews = reviews.slice(i, i + 3);
+                let slideHTML = '<div class="reviews-container">';
+                
+                slideReviews.forEach(review => {
+                    let starsHTML = '';
+                    for (let j = 0; j < 5; j++) {
+                        if (j < Math.floor(review.stars)) {
+                            starsHTML += '<i class="fas fa-star"></i>';
+                        } else if (j < review.stars) {
+                            starsHTML += '<i class="fas fa-star-half-alt"></i>';
+                        } else {
+                            starsHTML += '<i class="far fa-star"></i>';
+                        }
+                    }
+                    
+                    slideHTML += `
+                        <div class="review-card">
+                            <div class="stars">${starsHTML}</div>
+                            <p class="review-content">${review.content}</p>
+                            <div class="review-author">
+                                <img src="${review.avatar}" alt="${review.name}" class="author-avatar">
+                                <div class="author-info">
+                                    <h4>${review.name}</h4>
+                                    <p>${review.location}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                slideHTML += '</div>';
+                slide.innerHTML = slideHTML;
+                reviewsSlides.appendChild(slide);
+                
+                // Create dot
+                const dot = document.createElement('div');
+                dot.className = 'review-dot';
+                if (i === 0) dot.classList.add('active');
+                dot.dataset.slide = i / 3;
+                dot.addEventListener('click', () => {
+                    goToReviewSlide(i / 3);
+                });
+                reviewDots.appendChild(dot);
+            }
+            
+            // Set up navigation
+            reviewPrev.addEventListener('click', () => {
+                goToReviewSlide(currentReviewSlide - 1);
+            });
+            
+            reviewNext.addEventListener('click', () => {
+                goToReviewSlide(currentReviewSlide + 1);
+            });
+        }
+        
+        function goToReviewSlide(slideIndex) {
+            const slides = document.querySelectorAll('.reviews-slide');
+            if (slideIndex < 0) slideIndex = slides.length - 1;
+            if (slideIndex >= slides.length) slideIndex = 0;
+            
+            currentReviewSlide = slideIndex;
+            reviewsSlides.style.transform = `translateX(-${slideIndex * 100}%)`;
+            
+            // Update dots
+            document.querySelectorAll('.review-dot').forEach((dot, index) => {
+                if (index === slideIndex) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+        
         // Fetch products from Google Sheet with cache busting
         async function fetchProducts() {
             try {
@@ -806,12 +1090,15 @@
                 
                 // Process the data
                 allProducts.forEach(product => {
-                    // Split images string into array
+                    // Split images string into array (max 10 images)
                     if (product.Images) {
-                        product.Images = product.Images.split(',').map(img => img.trim());
+                        product.Images = product.Images.split(',').map(img => img.trim()).slice(0, 10);
                     } else {
                         product.Images = [];
                     }
+                    
+                    // Get video if exists
+                    product.Video = product.Video || '';
                     
                     // Convert price to number if needed
                     if (typeof product.Price === 'string') {
@@ -878,7 +1165,7 @@
             return products;
         }
         
-        // Render products to the grid
+        // Render products to the grid with carousels
         function renderProducts() {
             if (filteredProducts.length === 0) {
                 productsContainer.innerHTML = '<p class="no-products">No products found matching your criteria.</p>';
@@ -899,17 +1186,37 @@
                 const price = product.Price || 0;
                 const images = product.Images || [];
                 
-                // Get main image URL
-                const mainImageUrl = images.length > 0 ? 
-                    IMAGE_BASE_URL + encodeURIComponent(images[0].trim()) : 
-                    'https://via.placeholder.com/300x300?text=Image+Not+Available';
+                // Create carousel dots
+                let dotsHTML = '';
+                if (images.length > 1) {
+                    for (let i = 0; i < images.length; i++) {
+                        dotsHTML += `<div class="carousel-dot ${i === 0 ? 'active' : ''}"></div>`;
+                    }
+                }
                 
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
                 productCard.innerHTML = `
                     <div class="product-image-container">
-                        <img src="${mainImageUrl}" alt="${productName}" class="product-image"
-                             onerror="this.onerror=null; this.src='https://via.placeholder.com/300x300?text=Image+Not+Available'">
+                        <div class="carousel-container">
+                            ${images.length > 0 ? 
+                                `<img src="${IMAGE_BASE_URL + encodeURIComponent(images[0].trim())}" 
+                                      alt="${productName}" 
+                                      class="product-image"
+                                      onerror="this.onerror=null; this.src='https://via.placeholder.com/300x300?text=Image+Not+Available'">` : 
+                                '<div class="placeholder">Image Not Available</div>'}
+                            ${images.length > 1 ? `
+                                <div class="carousel-nav carousel-prev">
+                                    <i class="fas fa-chevron-left"></i>
+                                </div>
+                                <div class="carousel-nav carousel-next">
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                                <div class="carousel-dots">
+                                    ${dotsHTML}
+                                </div>
+                            ` : ''}
+                        </div>
                         <span class="product-category">${category}</span>
                     </div>
                     <div class="product-details">
@@ -918,6 +1225,40 @@
                         <div class="product-price">EGP ${price.toFixed(2)}</div>
                     </div>
                 `;
+                
+                // Add carousel functionality if multiple images
+                if (images.length > 1) {
+                    const carouselContainer = productCard.querySelector('.carousel-container');
+                    const carouselImages = carouselContainer.querySelectorAll('.product-image');
+                    const prevBtn = carouselContainer.querySelector('.carousel-prev');
+                    const nextBtn = carouselContainer.querySelector('.carousel-next');
+                    const dots = carouselContainer.querySelectorAll('.carousel-dot');
+                    
+                    let currentImageIndex = 0;
+                    
+                    function showImage(index) {
+                        carouselImages.forEach(img => img.style.display = 'none');
+                        carouselImages[index].style.display = 'block';
+                        
+                        dots.forEach(dot => dot.classList.remove('active'));
+                        dots[index].classList.add('active');
+                    }
+                    
+                    prevBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+                        showImage(currentImageIndex);
+                    });
+                    
+                    nextBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        currentImageIndex = (currentImageIndex + 1) % images.length;
+                        showImage(currentImageIndex);
+                    });
+                    
+                    // Initialize with first image
+                    showImage(0);
+                }
                 
                 productCard.addEventListener('click', () => openProductModal(product));
                 productsContainer.appendChild(productCard);
@@ -994,6 +1335,7 @@
             const description = product.Description || 'No description available';
             const price = product.Price || 0;
             const images = product.Images || [];
+            const video = product.Video || '';
             
             // Generate thumbnails HTML
             let thumbnailsHTML = '';
@@ -1012,9 +1354,24 @@
                 thumbnailsHTML = '<p>No images available</p>';
             }
             
+            // Video HTML if exists
+            let videoHTML = '';
+            if (video) {
+                const videoUrl = VIDEO_BASE_URL + encodeURIComponent(video.trim());
+                videoHTML = `
+                    <div class="video-container">
+                        <video class="product-video" autoplay muted loop playsinline>
+                            <source src="${videoUrl}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                `;
+            }
+            
             modalProductContent.innerHTML = `
                 <div class="modal-images">
-                    <div class="main-image-container">
+                    ${videoHTML}
+                    <div class="main-image-container" id="mainImageContainer">
                         ${images.length > 0 ? 
                             `<img src="${IMAGE_BASE_URL}${encodeURIComponent(images[0].trim())}" 
                                   alt="${productName}" 
@@ -1030,6 +1387,7 @@
                                 <i class="fas fa-chevron-right"></i>
                             </div>
                         ` : ''}
+                        <div class="zoom-level" id="zoomLevel">Click image to zoom</div>
                     </div>
                     <div class="thumbnails">
                         ${thumbnailsHTML}
@@ -1046,10 +1404,114 @@
                 </div>
             `;
             
+            // Initialize zoom and drag state
+            let zoomLevel = 0;
+            let mainImage = document.getElementById('mainImage');
+            let mainImageContainer = document.getElementById('mainImageContainer');
+            let zoomLevelIndicator = document.getElementById('zoomLevel');
+            
+            // Set up image click for zooming
+            if (mainImage) {
+                let isDragging = false;
+                let startX, startY;
+                let translateX = 0, translateY = 0;
+                let currentScale = 1;
+                
+                mainImage.addEventListener('click', function(e) {
+                    if (isDragging) {
+                        isDragging = false;
+                        return;
+                    }
+                    
+                    // Get click position relative to image
+                    const rect = this.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    // Calculate percentage for transform origin
+                    const originX = (x / rect.width) * 100;
+                    const originY = (y / rect.height) * 100;
+                    
+                    // Cycle through zoom levels: 0 -> 2 -> 4 -> 8 -> 0
+                    zoomLevel = (zoomLevel + 1) % 4;
+                    
+                    // Apply zoom transformation
+                    switch(zoomLevel) {
+                        case 0:
+                            currentScale = 1;
+                            this.style.transform = 'none';
+                            this.style.transformOrigin = 'center center';
+                            this.style.cursor = 'zoom-in';
+                            zoomLevelIndicator.textContent = 'Click image to zoom';
+                            break;
+                        case 1:
+                            currentScale = 2;
+                            this.style.transform = `scale(${currentScale})`;
+                            this.style.transformOrigin = `${originX}% ${originY}%`;
+                            this.style.cursor = 'zoom-in';
+                            zoomLevelIndicator.textContent = 'Zoom: 2x - Click to zoom more';
+                            break;
+                        case 2:
+                            currentScale = 4;
+                            this.style.transform = `scale(${currentScale})`;
+                            this.style.transformOrigin = `${originX}% ${originY}%`;
+                            this.style.cursor = 'zoom-in';
+                            zoomLevelIndicator.textContent = 'Zoom: 4x - Click to zoom more';
+                            break;
+                        case 3:
+                            currentScale = 8;
+                            this.style.transform = `scale(${currentScale})`;
+                            this.style.transformOrigin = `${originX}% ${originY}%`;
+                            this.style.cursor = 'zoom-out';
+                            zoomLevelIndicator.textContent = 'Zoom: 8x - Click to reset';
+                            break;
+                    }
+                    
+                    // Reset translation
+                    translateX = 0;
+                    translateY = 0;
+                    updateTransform();
+                });
+                
+                // Drag functionality
+                mainImage.addEventListener('mousedown', function(e) {
+                    if (zoomLevel === 0) return;
+                    
+                    isDragging = true;
+                    startX = e.clientX - translateX;
+                    startY = e.clientY - translateY;
+                    mainImageContainer.style.cursor = 'grabbing';
+                });
+                
+                document.addEventListener('mousemove', function(e) {
+                    if (!isDragging) return;
+                    
+                    translateX = e.clientX - startX;
+                    translateY = e.clientY - startY;
+                    
+                    // Limit dragging to image boundaries
+                    const maxX = (currentScale - 1) * mainImage.width / 2;
+                    const maxY = (currentScale - 1) * mainImage.height / 2;
+                    
+                    translateX = Math.max(-maxX, Math.min(maxX, translateX));
+                    translateY = Math.max(-maxY, Math.min(maxY, translateY));
+                    
+                    updateTransform();
+                });
+                
+                document.addEventListener('mouseup', function() {
+                    isDragging = false;
+                    mainImageContainer.style.cursor = 'grab';
+                });
+                
+                function updateTransform() {
+                    mainImage.style.transform = `scale(${currentScale}) translate(${translateX}px, ${translateY}px)`;
+                }
+            }
+            
             // Add event listeners for image navigation if there are multiple images
             if (images.length > 1) {
                 const thumbnails = modalProductContent.querySelectorAll('.thumbnail');
-                const mainImage = document.getElementById('mainImage');
                 const prevImageBtn = document.getElementById('prevImage');
                 const nextImageBtn = document.getElementById('nextImage');
                 
@@ -1064,6 +1526,12 @@
                         // Update active thumbnail
                         thumbnails.forEach(t => t.classList.remove('active'));
                         thumb.classList.add('active');
+                        
+                        // Reset zoom
+                        zoomLevel = 0;
+                        mainImage.style.transform = 'none';
+                        mainImage.style.cursor = 'zoom-in';
+                        zoomLevelIndicator.textContent = 'Click image to zoom';
                     });
                 });
                 
@@ -1074,6 +1542,12 @@
                     // Update active thumbnail
                     thumbnails.forEach(t => t.classList.remove('active'));
                     thumbnails[currentImageIndex].classList.add('active');
+                    
+                    // Reset zoom
+                    zoomLevel = 0;
+                    mainImage.style.transform = 'none';
+                    mainImage.style.cursor = 'zoom-in';
+                    zoomLevelIndicator.textContent = 'Click image to zoom';
                 });
                 
                 nextImageBtn.addEventListener('click', () => {
@@ -1083,6 +1557,12 @@
                     // Update active thumbnail
                     thumbnails.forEach(t => t.classList.remove('active'));
                     thumbnails[currentImageIndex].classList.add('active');
+                    
+                    // Reset zoom
+                    zoomLevel = 0;
+                    mainImage.style.transform = 'none';
+                    mainImage.style.cursor = 'zoom-in';
+                    zoomLevelIndicator.textContent = 'Click image to zoom';
                 });
             }
             
