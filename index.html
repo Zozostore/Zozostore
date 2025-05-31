@@ -786,13 +786,17 @@
             });
         });
         
-        // Fetch products from Google Sheet
+        // Fetch products from Google Sheet with cache busting
         async function fetchProducts() {
             try {
                 showLoading();
                 
+                // Add cache-busting parameter to URL
+                const cacheBuster = 't=' + new Date().getTime();
+                const url = GOOGLE_SHEET_URL + (GOOGLE_SHEET_URL.includes('?') ? '&' : '?') + cacheBuster;
+                
                 // Fetch the CSV data
-                const response = await fetch(GOOGLE_SHEET_URL);
+                const response = await fetch(url);
                 if (!response.ok) {
                     throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
                 }
@@ -813,6 +817,11 @@
                     if (typeof product.Price === 'string') {
                         product.Price = parseFloat(product.Price.replace(/[^\d.]/g, ''));
                     }
+                    
+                    // Ensure product name exists
+                    if (!product['Product Name']) {
+                        product['Product Name'] = 'Unnamed Product';
+                    }
                 });
                 
                 filteredProducts = [...allProducts];
@@ -825,7 +834,7 @@
             }
         }
         
-        // Parse CSV data into JSON
+        // Improved CSV parsing
         function parseCSV(csv) {
             const lines = csv.split('\n');
             const headers = lines[0].split(',').map(h => h.trim());
@@ -837,25 +846,33 @@
                 if (!line) continue;
                 
                 // Split while preserving quoted commas
-                const values = line.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
-                const product = {};
+                const values = [];
+                let current = '';
+                let inQuotes = false;
                 
-                if (values) {
-                    for (let j = 0; j < headers.length; j++) {
-                        if (j < values.length) {
-                            let value = values[j].trim();
-                            // Remove surrounding quotes if present
-                            if (value.startsWith('"') && value.endsWith('"')) {
-                                value = value.slice(1, -1);
-                            }
-                            product[headers[j]] = value;
-                        } else {
-                            product[headers[j]] = '';
-                        }
-                    }
+                for (let j = 0; j < line.length; j++) {
+                    const char = line[j];
                     
-                    products.push(product);
+                    if (char === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                        values.push(current.trim());
+                        current = '';
+                    } else {
+                        current += char;
+                    }
                 }
+                values.push(current.trim()); // Push last value
+                
+                // Skip if not enough values
+                if (values.length < headers.length) continue;
+                
+                const product = {};
+                for (let j = 0; j < headers.length; j++) {
+                    product[headers[j]] = values[j] || '';
+                }
+                
+                products.push(product);
             }
             
             return products;
@@ -876,26 +893,29 @@
             productsContainer.innerHTML = '';
             
             productsToShow.forEach(product => {
-                const productName = product['Product Name'];
-                const category = product.Category;
-                const description = product.Description;
-                const price = product.Price;
+                const productName = product['Product Name'] || 'Unnamed Product';
+                const category = product.Category || 'Uncategorized';
+                const description = product.Description || 'No description available';
+                const price = product.Price || 0;
                 const images = product.Images || [];
                 
                 // Get main image URL
-                const mainImageUrl = images.length > 0 ? IMAGE_BASE_URL + images[0] : 'https://via.placeholder.com/300x300?text=Image+Not+Available';
+                const mainImageUrl = images.length > 0 ? 
+                    IMAGE_BASE_URL + encodeURIComponent(images[0].trim()) : 
+                    'https://via.placeholder.com/300x300?text=Image+Not+Available';
                 
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
                 productCard.innerHTML = `
                     <div class="product-image-container">
-                        <img src="${mainImageUrl}" alt="${productName}" class="product-image">
+                        <img src="${mainImageUrl}" alt="${productName}" class="product-image"
+                             onerror="this.onerror=null; this.src='https://via.placeholder.com/300x300?text=Image+Not+Available'">
                         <span class="product-category">${category}</span>
                     </div>
                     <div class="product-details">
                         <h3 class="product-title">${productName}</h3>
                         <p class="product-description">${description.substring(0, 80)}${description.length > 80 ? '...' : ''}</p>
-                        <div class="product-price">EGP ${price}</div>
+                        <div class="product-price">EGP ${price.toFixed(2)}</div>
                     </div>
                 `;
                 
@@ -969,17 +989,21 @@
         
         // Open product modal with details
         function openProductModal(product) {
-            const productName = product['Product Name'];
-            const category = product.Category;
-            const description = product.Description;
-            const price = product.Price;
+            const productName = product['Product Name'] || 'Unnamed Product';
+            const category = product.Category || 'Uncategorized';
+            const description = product.Description || 'No description available';
+            const price = product.Price || 0;
             const images = product.Images || [];
             
             // Generate thumbnails HTML
             let thumbnailsHTML = '';
             images.forEach((img, index) => {
+                const imgUrl = IMAGE_BASE_URL + encodeURIComponent(img.trim());
                 thumbnailsHTML += `
-                    <img src="${IMAGE_BASE_URL}${img}" alt="${productName} ${index}" class="thumbnail ${index === 0 ? 'active' : ''}" data-index="${index}">
+                    <img src="${imgUrl}" alt="${productName} ${index}" 
+                         class="thumbnail ${index === 0 ? 'active' : ''}" 
+                         data-index="${index}"
+                         onerror="this.onerror=null; this.src='https://via.placeholder.com/80x80?text=Image'">
                 `;
             });
             
@@ -992,7 +1016,11 @@
                 <div class="modal-images">
                     <div class="main-image-container">
                         ${images.length > 0 ? 
-                            `<img src="${IMAGE_BASE_URL}${images[0]}" alt="${productName}" class="main-image" id="mainImage">` : 
+                            `<img src="${IMAGE_BASE_URL}${encodeURIComponent(images[0].trim())}" 
+                                  alt="${productName}" 
+                                  class="main-image" 
+                                  id="mainImage"
+                                  onerror="this.onerror=null; this.src='https://via.placeholder.com/400x400?text=Image+Not+Available'">` : 
                             '<div class="placeholder">Image Not Available</div>'}
                         ${images.length > 1 ? `
                             <div class="image-nav prev-image" id="prevImage">
@@ -1011,7 +1039,7 @@
                     <h2 class="modal-title">${productName}</h2>
                     <span class="modal-category">${category}</span>
                     <p class="modal-description">${description}</p>
-                    <div class="modal-price">EGP ${price}</div>
+                    <div class="modal-price">EGP ${price.toFixed(2)}</div>
                     <button class="back-btn" id="backToProducts">
                         <i class="fas fa-arrow-left"></i> Back to Products
                     </button>
@@ -1031,7 +1059,7 @@
                     thumb.addEventListener('click', () => {
                         const index = parseInt(thumb.getAttribute('data-index'));
                         currentImageIndex = index;
-                        mainImage.src = IMAGE_BASE_URL + images[index];
+                        mainImage.src = IMAGE_BASE_URL + encodeURIComponent(images[index].trim());
                         
                         // Update active thumbnail
                         thumbnails.forEach(t => t.classList.remove('active'));
@@ -1041,7 +1069,7 @@
                 
                 prevImageBtn.addEventListener('click', () => {
                     currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
-                    mainImage.src = IMAGE_BASE_URL + images[currentImageIndex];
+                    mainImage.src = IMAGE_BASE_URL + encodeURIComponent(images[currentImageIndex].trim());
                     
                     // Update active thumbnail
                     thumbnails.forEach(t => t.classList.remove('active'));
@@ -1050,7 +1078,7 @@
                 
                 nextImageBtn.addEventListener('click', () => {
                     currentImageIndex = (currentImageIndex + 1) % images.length;
-                    mainImage.src = IMAGE_BASE_URL + images[currentImageIndex];
+                    mainImage.src = IMAGE_BASE_URL + encodeURIComponent(images[currentImageIndex].trim());
                     
                     // Update active thumbnail
                     thumbnails.forEach(t => t.classList.remove('active'));
