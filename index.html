@@ -478,17 +478,10 @@
             margin-bottom: 1rem;
         }
 
-        /* ENHANCEMENT: Larger product description */
         .modal-description {
             color: #555;
             line-height: 1.8;
             margin-bottom: 1.5rem;
-            font-size: 1.1rem; /* Increased font size */
-            padding: 1rem; /* Added padding */
-            background-color: #f9f9f9; /* Light background */
-            border-radius: 8px; /* Rounded corners */
-            max-height: 300px; /* Fixed height */
-            overflow-y: auto; /* Scrollable */
         }
 
         .modal-price {
@@ -793,12 +786,6 @@
             .review-nav.next {
                 right: -10px;
             }
-            
-            /* Responsive modal description */
-            .modal-description {
-                font-size: 1rem;
-                max-height: 200px;
-            }
         }
 
         @media (max-width: 480px) {
@@ -855,20 +842,6 @@
             border-radius: 20px;
             font-size: 0.8rem;
             z-index: 10;
-        }
-        
-        /* Drag indicator */
-        .drag-indicator {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            z-index: 10;
-            display: none;
         }
     </style>
 </head>
@@ -1268,13 +1241,12 @@
             }
         }
         
-        // Improved CSV parsing with duplicate name prevention
+        // Improved CSV parsing
         function parseCSV(csv) {
             const lines = csv.split('\n');
             const headers = lines[0].split(',').map(h => h.trim());
             
             const products = [];
-            const seenNames = new Set(); // Track seen product names
             
             for (let i = 1; i < lines.length; i++) {
                 const line = lines[i].trim();
@@ -1307,12 +1279,7 @@
                     product[headers[j]] = values[j] || '';
                 }
                 
-                // Check for duplicate product names
-                const productName = product['Product Name'] || '';
-                if (productName && !seenNames.has(productName.toLowerCase())) {
-                    seenNames.add(productName.toLowerCase());
-                    products.push(product);
-                }
+                products.push(product);
             }
             
             return products;
@@ -1581,7 +1548,6 @@
                             </div>
                         ` : ''}
                         <div class="zoom-level" id="zoomLevel">Click image to zoom</div>
-                        <div class="drag-indicator" id="dragIndicator" style="display: none;">Drag to navigate</div>
                     </div>
                     <div class="thumbnails">
                         ${thumbnailsHTML}
@@ -1603,8 +1569,6 @@
             const videoContainers = mainImageContainer.querySelectorAll('.video-container');
             const mainImages = mainImageContainer.querySelectorAll('.main-image');
             const thumbnails = modalProductContent.querySelectorAll('.thumbnail');
-            const zoomLevelIndicator = document.getElementById('zoomLevel');
-            const dragIndicator = document.getElementById('dragIndicator');
             
             let currentMediaIndex = 0;
             
@@ -1667,58 +1631,15 @@
                 });
             }
             
-            // Initialize zoom and drag for images
+            // Initialize zoom only for images
             mainImages.forEach(img => {
                 // Initialize zoom and drag state
                 let zoomLevel = 0;
-                let isDragging = false;
-                let startX, startY;
-                let translateX = 0, translateY = 0;
-                
-                // Reset drag position when media changes
-                img.addEventListener('load', function() {
-                    translateX = 0;
-                    translateY = 0;
-                    this.style.transform = 'none';
-                });
-                
-                img.addEventListener('mousedown', function(e) {
-                    // Only drag if zoomed in
-                    if (zoomLevel === 0 || mediaItems[currentMediaIndex].type === 'video') return;
-                    
-                    isDragging = true;
-                    startX = e.clientX - translateX;
-                    startY = e.clientY - translateY;
-                    this.style.cursor = 'grabbing';
-                    dragIndicator.style.display = 'block';
-                });
-                
-                img.addEventListener('mousemove', function(e) {
-                    if (!isDragging) return;
-                    
-                    translateX = e.clientX - startX;
-                    translateY = e.clientY - startY;
-                    
-                    // Apply translation based on zoom level
-                    const scale = getScaleForZoomLevel(zoomLevel);
-                    this.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-                });
-                
-                document.addEventListener('mouseup', () => {
-                    isDragging = false;
-                    if (img) img.style.cursor = zoomLevel > 0 ? 'grab' : 'zoom-in';
-                    dragIndicator.style.display = 'none';
-                });
+                let zoomLevelIndicator = document.getElementById('zoomLevel');
                 
                 img.addEventListener('click', function(e) {
                     // Only zoom if it's an image and not a video
                     if (mediaItems[currentMediaIndex].type === 'video') return;
-                    
-                    // Prevent click during drag
-                    if (isDragging) {
-                        isDragging = false;
-                        return;
-                    }
                     
                     // Get click position relative to image
                     const rect = this.getBoundingClientRect();
@@ -1732,10 +1653,6 @@
                     // Cycle through zoom levels: 0 -> 2 -> 4 -> 8 -> 0
                     zoomLevel = (zoomLevel + 1) % 4;
                     
-                    // Reset translation when zoom level changes
-                    translateX = 0;
-                    translateY = 0;
-                    
                     // Apply zoom transformation
                     switch(zoomLevel) {
                         case 0:
@@ -1745,65 +1662,25 @@
                             zoomLevelIndicator.textContent = 'Click image to zoom';
                             break;
                         case 1:
-                            this.style.transform = `translate(0, 0) scale(2)`;
+                            this.style.transform = `scale(2)`;
                             this.style.transformOrigin = `${originX}% ${originY}%`;
-                            this.style.cursor = 'grab';
+                            this.style.cursor = 'zoom-in';
                             zoomLevelIndicator.textContent = 'Zoom: 2x - Click to zoom more';
                             break;
                         case 2:
-                            this.style.transform = `translate(0, 0) scale(4)`;
+                            this.style.transform = `scale(4)`;
                             this.style.transformOrigin = `${originX}% ${originY}%`;
-                            this.style.cursor = 'grab';
+                            this.style.cursor = 'zoom-in';
                             zoomLevelIndicator.textContent = 'Zoom: 4x - Click to zoom more';
                             break;
                         case 3:
-                            this.style.transform = `translate(0, 0) scale(8)`;
+                            this.style.transform = `scale(8)`;
                             this.style.transformOrigin = `${originX}% ${originY}%`;
-                            this.style.cursor = 'grab';
+                            this.style.cursor = 'zoom-out';
                             zoomLevelIndicator.textContent = 'Zoom: 8x - Click to reset';
                             break;
                     }
                 });
-                
-                // Touch events for mobile
-                img.addEventListener('touchstart', function(e) {
-                    if (zoomLevel === 0 || mediaItems[currentMediaIndex].type === 'video') return;
-                    
-                    isDragging = true;
-                    const touch = e.touches[0];
-                    startX = touch.clientX - translateX;
-                    startY = touch.clientY - translateY;
-                    this.style.cursor = 'grabbing';
-                    dragIndicator.style.display = 'block';
-                    e.preventDefault();
-                });
-                
-                img.addEventListener('touchmove', function(e) {
-                    if (!isDragging) return;
-                    
-                    const touch = e.touches[0];
-                    translateX = touch.clientX - startX;
-                    translateY = touch.clientY - startY;
-                    
-                    const scale = getScaleForZoomLevel(zoomLevel);
-                    this.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-                    e.preventDefault();
-                });
-                
-                img.addEventListener('touchend', function() {
-                    isDragging = false;
-                    this.style.cursor = zoomLevel > 0 ? 'grab' : 'zoom-in';
-                    dragIndicator.style.display = 'none';
-                });
-                
-                function getScaleForZoomLevel(level) {
-                    switch(level) {
-                        case 1: return 2;
-                        case 2: return 4;
-                        case 3: return 8;
-                        default: return 1;
-                    }
-                }
             });
             
             // Back button functionality
